@@ -1,0 +1,31 @@
+Arguments: 
+  /Users/johnschoeman/.asdf/installs/nodejs/13.6.0/bin/node /usr/local/Cellar/yarn/1.21.1/libexec/bin/yarn.js add -d create-elm-app
+
+PATH: 
+  .git/safe/../../bin:/Users/johnschoeman/.asdf/shims:/Users/johnschoeman/.asdf/bin:/Users/johnschoeman/.bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/MacGPG2/bin:/Users/johnschoeman/Library/Android/sdk/tools:/Users/johnschoeman/Library/Android/sdk/tools/bin:/Users/johnschoeman/Library/Android/sdk/platform-tools:/Users/johnschoeman/Library/Android/sdk/emulator
+
+Yarn version: 
+  1.21.1
+
+Node version: 
+  13.6.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/johnschoeman/workspace/elm_workspace/push-notificaitons-pwa/package.json: Unexpected end of JSON input
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.21.1/libexec/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.21.1/libexec/lib/cli.js:310:30)
+      at /usr/local/Cellar/yarn/1.21.1/libexec/lib/cli.js:321:13
+
+npm manifest: 
+  
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
