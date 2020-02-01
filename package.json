@@ -4,6 +4,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "create-elm-app": "^4.2.1"
+    "create-elm-app": "^4.2.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   }
 }
