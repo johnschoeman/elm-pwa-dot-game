@@ -1,7 +1,8 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, text, div, h1, img)
+import Html exposing (Html, button, text, div, h1, img)
+import Html.Events exposing (onClick)
 import Html.Attributes exposing (src)
 
 
@@ -9,12 +10,14 @@ import Html.Attributes exposing (src)
 
 
 type alias Model =
-    {}
+    {
+      count: Int
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { count =  0 }, Cmd.none )
 
 
 
@@ -22,12 +25,16 @@ init =
 
 
 type Msg
-    = NoOp
+    = Increment | Decrement
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+  case msg of
+    Increment -> 
+      ({ model | count = model.count + 1}, Cmd.none)
+    Decrement ->
+      ({ model | count = model.count - 1}, Cmd.none)
 
 
 
@@ -37,8 +44,11 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
+        [
+        h1 [] [ text "Elm PWA Push Notification" ]
+        , button [onClick Decrement] [ text "-" ]
+        , text (String.fromInt model.count)
+        , button [onClick Increment] [ text "+" ]
         ]
 
 
