@@ -3,6 +3,7 @@
     "build": "elm-app build"
   },
   "dependencies": {
+    "elm-format": "^0.8.2",
     "tailwind": "^4.0.0"
   },
   "devDependencies": {
