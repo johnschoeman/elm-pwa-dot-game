@@ -3,7 +3,7 @@ module Main exposing (..)
 import Browser
 import Html exposing (Html, button, text, div, h1, img)
 import Html.Events exposing (onClick)
-import Html.Attributes exposing (src)
+import Html.Attributes exposing (src, class)
 
 
 ---- MODEL ----
@@ -46,7 +46,7 @@ view model =
     div []
         [
         h1 [] [ text "Elm PWA Push Notification" ]
-        , button [onClick Decrement] [ text "-" ]
+        , button [class "text-gray-600", onClick Decrement] [ text "-" ]
         , text (String.fromInt model.count)
         , button [onClick Increment] [ text "+" ]
         ]

@@ -2,7 +2,9 @@
   "scripts": {
     "build": "elm-app build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "tailwind": "^4.0.0"
+  },
   "devDependencies": {
     "create-elm-app": "^4.2.1",
     "webpack": "^4.41.5",
