@@ -524,10 +524,12 @@ view model =
         selection =
             model.selection
     in
-    div []
-        [ h1 [ class "text-blue-400" ] [ text "Elm PWA Dot Game" ]
-        , boardToHtml board selection
-        , text (nodeToString selection)
+    div [ class "bg-gray-100" ]
+        [ h1 [ class "text-gray-800 p-4 border-b-2 border-gray-800" ] [ text "Elm PWA Dot Game" ]
+        , div [ class "p-8" ]
+            [ text (nodeToString selection)
+            , boardToHtml board selection
+            ]
         ]
 
 
@@ -536,35 +538,43 @@ boardToHtml board selection =
     let
         cellWithBoarder =
             cellToHtml selection
+
+        rowStyle =
+            "flex flex-row justify-center items-center"
     in
-    ul []
-        [ ul [] [ cellWithBoarder board.a, cellWithBoarder board.b, cellWithBoarder board.c ]
-        , ul [] [ cellWithBoarder board.d, cellWithBoarder board.e ]
-        , ul [] [ cellWithBoarder board.f, cellWithBoarder board.g, cellWithBoarder board.h ]
-        , ul [] [ cellWithBoarder board.i, cellWithBoarder board.j ]
-        , ul [] [ cellWithBoarder board.k, cellWithBoarder board.l, cellWithBoarder board.m ]
+    div [ class "flex-column p-4 items-center justify-center border-2" ]
+        [ div [ class rowStyle ] [ cellWithBoarder board.a, cellWithBoarder board.b, cellWithBoarder board.c ]
+        , div [ class rowStyle ] [ cellWithBoarder board.d, cellWithBoarder board.e ]
+        , div [ class rowStyle ] [ cellWithBoarder board.f, cellWithBoarder board.g, cellWithBoarder board.h ]
+        , div [ class rowStyle ] [ cellWithBoarder board.i, cellWithBoarder board.j ]
+        , div [ class rowStyle ] [ cellWithBoarder board.k, cellWithBoarder board.l, cellWithBoarder board.m ]
         ]
 
 
 cellToHtml : Node -> Cell -> Html Msg
 cellToHtml selection cell =
     let
+        baseStyle =
+            "flex items-center justify-center text-gray-700 text-center bg-gray-200 w-12 h-12 px-4 py-2 m-2"
+
         style =
             if cell.node == selection then
-                "w-24 h-12 m-8 border-2 border-blue-600"
+                baseStyle ++ " border-2 border-blue-600"
 
             else
-                "w-24 h-12 m-8"
+                baseStyle
 
         content =
             case cell.status of
                 Dot ->
-                    " Dot "
+                    " D "
 
                 Empty ->
-                    " --- "
+                    " - "
     in
-    button [ class style, onClick (SelectNode cell.node) ] [ text content ]
+    div [ class "flex justify-center items-center w-24" ]
+        [ div [ class style, onClick (SelectNode cell.node) ] [ text content ]
+        ]
 
 
 nodeToString : Node -> String
