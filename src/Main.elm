@@ -1,7 +1,8 @@
 module Main exposing (..)
 
+import Board exposing (..)
 import Browser
-import Dict exposing (..)
+import Dict
 import Html exposing (Html, button, div, h1, img, text, ul)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
@@ -11,353 +12,24 @@ import Html.Events exposing (onClick)
 ---- MODEL ----
 
 
-type Node
-    = A
-    | B
-    | C
-    | D
-    | E
-    | F
-    | G
-    | H
-    | I
-    | J
-    | K
-    | L
-    | M
-
-
-type Status
-    = Dot
-    | Empty
-
-
-type alias Start =
-    String
-
-
-type alias Neighbor =
-    String
-
-
-type alias Destination =
-    String
-
-
-type alias Cell =
-    { node : Node
-    , status : Status
-    }
-
-
-type alias Board =
-    { a : Cell
-    , b : Cell
-    , c : Cell
-    , d : Cell
-    , e : Cell
-    , f : Cell
-    , g : Cell
-    , h : Cell
-    , i : Cell
-    , j : Cell
-    , k : Cell
-    , l : Cell
-    , m : Cell
-    }
-
-
 type alias Selection =
     Node
+
+
+type alias Level =
+    Int
 
 
 type alias Model =
     { board : Board
     , selection : Selection
-    }
-
-
-
---- if a node has a neighbor, then the jump is considered possible by the game
-
-
-getNeighborNode : Node -> Node -> Maybe Node
-getNeighborNode fromNode toNode =
-    case fromNode of
-        A ->
-            case toNode of
-                C ->
-                    Just B
-
-                G ->
-                    Just D
-
-                K ->
-                    Just F
-
-                _ ->
-                    Nothing
-
-        B ->
-            case toNode of
-                F ->
-                    Just D
-
-                L ->
-                    Just G
-
-                H ->
-                    Just E
-
-                _ ->
-                    Nothing
-
-        C ->
-            case toNode of
-                A ->
-                    Just B
-
-                G ->
-                    Just E
-
-                M ->
-                    Just H
-
-                _ ->
-                    Nothing
-
-        D ->
-            case toNode of
-                J ->
-                    Just G
-
-                _ ->
-                    Nothing
-
-        E ->
-            case toNode of
-                I ->
-                    Just G
-
-                _ ->
-                    Nothing
-
-        F ->
-            case toNode of
-                B ->
-                    Just D
-
-                H ->
-                    Just G
-
-                L ->
-                    Just I
-
-                _ ->
-                    Nothing
-
-        G ->
-            case toNode of
-                A ->
-                    Just D
-
-                C ->
-                    Just E
-
-                K ->
-                    Just I
-
-                M ->
-                    Just J
-
-                _ ->
-                    Nothing
-
-        H ->
-            case toNode of
-                B ->
-                    Just E
-
-                F ->
-                    Just G
-
-                L ->
-                    Just J
-
-                _ ->
-                    Nothing
-
-        I ->
-            case toNode of
-                E ->
-                    Just G
-
-                _ ->
-                    Nothing
-
-        J ->
-            case toNode of
-                D ->
-                    Just G
-
-                _ ->
-                    Nothing
-
-        K ->
-            case toNode of
-                A ->
-                    Just F
-
-                G ->
-                    Just I
-
-                M ->
-                    Just L
-
-                _ ->
-                    Nothing
-
-        L ->
-            case toNode of
-                F ->
-                    Just I
-
-                B ->
-                    Just G
-
-                H ->
-                    Just J
-
-                _ ->
-                    Nothing
-
-        M ->
-            case toNode of
-                K ->
-                    Just L
-
-                G ->
-                    Just J
-
-                C ->
-                    Just H
-
-                _ ->
-                    Nothing
-
-
-a : Cell
-a =
-    { node = A
-    , status = Dot
-    }
-
-
-b : Cell
-b =
-    { node = B
-    , status = Dot
-    }
-
-
-c : Cell
-c =
-    { node = C
-    , status = Empty
-    }
-
-
-d : Cell
-d =
-    { node = D
-    , status = Dot
-    }
-
-
-e : Cell
-e =
-    { node = E
-    , status = Empty
-    }
-
-
-f : Cell
-f =
-    { node = F
-    , status = Empty
-    }
-
-
-g : Cell
-g =
-    { node = G
-    , status = Empty
-    }
-
-
-h : Cell
-h =
-    { node = H
-    , status = Empty
-    }
-
-
-i : Cell
-i =
-    { node = I
-    , status = Dot
-    }
-
-
-j : Cell
-j =
-    { node = J
-    , status = Empty
-    }
-
-
-k : Cell
-k =
-    { node = K
-    , status = Dot
-    }
-
-
-l : Cell
-l =
-    { node = L
-    , status = Empty
-    }
-
-
-m : Cell
-m =
-    { node = M
-    , status = Empty
-    }
-
-
-initialBoard : Board
-initialBoard =
-    { a = a
-    , b = b
-    , c = c
-    , d = d
-    , e = e
-    , f = f
-    , g = g
-    , h = h
-    , i = i
-    , j = j
-    , k = k
-    , l = l
-    , m = m
+    , level : Level
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { board = initialBoard, selection = A }, Cmd.none )
+    ( { board = Board.level1, selection = A, level = 1 }, Cmd.none )
 
 
 
@@ -367,6 +39,8 @@ init =
 type Msg
     = SelectNode Node
     | ResetGame
+    | IncrementLevel
+    | DecrementLevel
     | NoOp
 
 
@@ -399,7 +73,46 @@ update msg model =
                     ( { model | selection = toNode }, Cmd.none )
 
         ResetGame ->
-            ( { model | board = initialBoard }, Cmd.none )
+            let
+                maybeLevel =
+                    Dict.get model.level Board.levels
+            in
+            case maybeLevel of
+                Just level ->
+                    ( { model | board = level }, Cmd.none )
+
+                Nothing ->
+                    ( { model | board = Board.level1 }, Cmd.none )
+
+        IncrementLevel ->
+            let
+                nextLevelNumber =
+                    model.level + 1
+
+                maybeNextLevel =
+                    Dict.get nextLevelNumber Board.levels
+            in
+            case maybeNextLevel of
+                Just level ->
+                    ( { model | level = nextLevelNumber, board = level }, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        DecrementLevel ->
+            let
+                nextLevelNumber =
+                    model.level - 1
+
+                maybeNextLevel =
+                    Dict.get nextLevelNumber Board.levels
+            in
+            case maybeNextLevel of
+                Just level ->
+                    ( { model | level = nextLevelNumber, board = level }, Cmd.none )
+
+                Nothing ->
+                    ( model, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -531,16 +244,23 @@ view model =
     div [ class "bg-gray-100" ]
         [ h1 [ class "text-gray-800 p-4 border-b-2 border-gray-800" ] [ text "Elm PWA Dot Game" ]
         , div [ class "p-8" ]
-            [ boardToHtml board selection
-            , footer
+            [ header model
+            , boardToHtml board selection
             ]
         ]
 
 
-footer : Html Msg
-footer =
-    div [ class "px-4 py-8" ]
-        [ button [ class "w-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", onClick ResetGame ] [ text "Reset" ]
+header : Model -> Html Msg
+header model =
+    let
+        buttonStyle =
+            "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    in
+    div [ class "flex flex-row justify-center items-center" ]
+        [ button [ onClick DecrementLevel, class buttonStyle ] [ text "<-" ]
+        , div [ class "text-gray-800 px-4 py-4" ] [ text (String.fromInt model.level) ]
+        , button [ onClick IncrementLevel, class buttonStyle ] [ text "->" ]
+        , button [ onClick ResetGame, class (buttonStyle ++ " ml-8") ] [ text "Reset" ]
         ]
 
 
