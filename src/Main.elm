@@ -366,6 +366,7 @@ init =
 
 type Msg
     = SelectNode Node
+    | ResetGame
     | NoOp
 
 
@@ -396,6 +397,9 @@ update msg model =
 
                 Nothing ->
                     ( { model | selection = toNode }, Cmd.none )
+
+        ResetGame ->
+            ( { model | board = initialBoard }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -527,9 +531,16 @@ view model =
     div [ class "bg-gray-100" ]
         [ h1 [ class "text-gray-800 p-4 border-b-2 border-gray-800" ] [ text "Elm PWA Dot Game" ]
         , div [ class "p-8" ]
-            [ text (nodeToString selection)
-            , boardToHtml board selection
+            [ boardToHtml board selection
+            , footer
             ]
+        ]
+
+
+footer : Html Msg
+footer =
+    div [ class "px-4 py-8" ]
+        [ button [ class "w-24 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded", onClick ResetGame ] [ text "Reset" ]
         ]
 
 
