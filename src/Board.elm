@@ -1,6 +1,5 @@
 module Board exposing
     ( Board
-    , Cell
     , Destination
     , Neighbor
     , Node(..)
@@ -60,26 +59,20 @@ type alias Destination =
     String
 
 
-type alias Cell =
-    { node : Node
-    , status : Status
-    }
-
-
 type alias Board =
-    { a : Cell
-    , b : Cell
-    , c : Cell
-    , d : Cell
-    , e : Cell
-    , f : Cell
-    , g : Cell
-    , h : Cell
-    , i : Cell
-    , j : Cell
-    , k : Cell
-    , l : Cell
-    , m : Cell
+    { a : Status
+    , b : Status
+    , c : Status
+    , d : Status
+    , e : Status
+    , f : Status
+    , g : Status
+    , h : Status
+    , i : Status
+    , j : Status
+    , k : Status
+    , l : Status
+    , m : Status
     }
 
 
@@ -295,90 +288,90 @@ getNeighborNode fromNode toNode =
                     Nothing
 
 
-updateBoardByNode : Node -> (Cell -> Cell) -> Board -> Board
-updateBoardByNode node updateCell board =
+updateBoardByNode : Node -> Status -> Board -> Board
+updateBoardByNode node status board =
     case node of
         A ->
-            { board | a = updateCell board.a }
+            { board | a = status }
 
         B ->
-            { board | b = updateCell board.b }
+            { board | b = status }
 
         C ->
-            { board | c = updateCell board.c }
+            { board | c = status }
 
         D ->
-            { board | d = updateCell board.d }
+            { board | d = status }
 
         E ->
-            { board | e = updateCell board.e }
+            { board | e = status }
 
         F ->
-            { board | f = updateCell board.f }
+            { board | f = status }
 
         G ->
-            { board | g = updateCell board.g }
+            { board | g = status }
 
         H ->
-            { board | h = updateCell board.h }
+            { board | h = status }
 
         I ->
-            { board | i = updateCell board.i }
+            { board | i = status }
 
         J ->
-            { board | j = updateCell board.j }
+            { board | j = status }
 
         K ->
-            { board | k = updateCell board.k }
+            { board | k = status }
 
         L ->
-            { board | l = updateCell board.l }
+            { board | l = status }
 
         M ->
-            { board | m = updateCell board.m }
+            { board | m = status }
 
 
-getDataAtNode : (Cell -> a) -> Board -> Node -> a
-getDataAtNode evaluateCell board node =
+getDataAtNode : Board -> Node -> Status
+getDataAtNode board node =
     case node of
         A ->
-            evaluateCell board.a
+            board.a
 
         B ->
-            evaluateCell board.b
+            board.b
 
         C ->
-            evaluateCell board.c
+            board.c
 
         D ->
-            evaluateCell board.d
+            board.d
 
         E ->
-            evaluateCell board.e
+            board.e
 
         F ->
-            evaluateCell board.f
+            board.f
 
         G ->
-            evaluateCell board.g
+            board.g
 
         H ->
-            evaluateCell board.h
+            board.h
 
         I ->
-            evaluateCell board.i
+            board.i
 
         J ->
-            evaluateCell board.j
+            board.j
 
         K ->
-            evaluateCell board.k
+            board.k
 
         L ->
-            evaluateCell board.l
+            board.l
 
         M ->
-            evaluateCell board.m
+            board.m
 
 
 dotCount : Board -> Int
@@ -388,12 +381,12 @@ dotCount board =
 
 addDots : Board -> Node -> Int -> Int
 addDots board node acc =
-    getDataAtNode hasDot board node + acc
+    hasDot (getDataAtNode board node) + acc
 
 
-hasDot : Cell -> Int
-hasDot cell =
-    if cell.status == Dot then
+hasDot : Status -> Int
+hasDot status =
+    if status == Dot then
         1
 
     else
@@ -412,30 +405,27 @@ anyValidMovesOnBoard board fromNode acc =
             True
 
         False ->
-            getDataAtNode (hasValidMove board) board fromNode
+            hasValidMove board fromNode
 
 
-hasValidMove : Board -> Cell -> Bool
-hasValidMove board fromCell =
-    List.foldl (anyValidMovesForCell board fromCell) False allNodes
+hasValidMove : Board -> Node -> Bool
+hasValidMove board fromNode =
+    List.foldl (anyValidMovesForNode board fromNode) False allNodes
 
 
-anyValidMovesForCell : Board -> Cell -> Node -> Bool -> Bool
-anyValidMovesForCell board fromCell toNode acc =
+anyValidMovesForNode : Board -> Node -> Node -> Bool -> Bool
+anyValidMovesForNode board fromNode toNode acc =
     case acc of
         True ->
             True
 
         False ->
-            getDataAtNode (moveIsValid board toNode) board fromCell.node
+            moveIsValid board fromNode toNode
 
 
-moveIsValid : Board -> Node -> Cell -> Bool
-moveIsValid board toNode fromCell =
+moveIsValid : Board -> Node -> Node -> Bool
+moveIsValid board toNode fromNode =
     let
-        fromNode =
-            fromCell.node
-
         maybeNeighborNode =
             getNeighborNode fromNode toNode
     in
@@ -446,13 +436,13 @@ moveIsValid board toNode fromCell =
         Just neighborNode ->
             let
                 fromStatus =
-                    getDataAtNode .status board fromNode
+                    getDataAtNode board fromNode
 
                 neighborStatus =
-                    getDataAtNode .status board neighborNode
+                    getDataAtNode board neighborNode
 
                 toStatus =
-                    getDataAtNode .status board toNode
+                    getDataAtNode board toNode
             in
             fromStatus == Dot && neighborStatus == Dot && toStatus == Empty
 
@@ -475,177 +465,133 @@ levels =
 
 emptyBoard : Board
 emptyBoard =
-    { a =
-        { node = A
-        , status = Empty
-        }
-    , b =
-        { node = B
-        , status = Empty
-        }
-    , c =
-        { node = C
-        , status = Empty
-        }
-    , d =
-        { node = D
-        , status = Empty
-        }
-    , e =
-        { node = E
-        , status = Empty
-        }
-    , f =
-        { node = F
-        , status = Empty
-        }
-    , g =
-        { node = G
-        , status = Empty
-        }
-    , h =
-        { node = H
-        , status = Empty
-        }
-    , i =
-        { node = I
-        , status = Empty
-        }
-    , j =
-        { node = J
-        , status = Empty
-        }
-    , k =
-        { node = K
-        , status = Empty
-        }
-    , l =
-        { node = L
-        , status = Empty
-        }
-    , m =
-        { node = M
-        , status = Empty
-        }
+    { a = Empty
+    , b = Empty
+    , c = Empty
+    , d = Empty
+    , e = Empty
+    , f = Empty
+    , g = Empty
+    , h = Empty
+    , i = Empty
+    , j = Empty
+    , k = Empty
+    , l = Empty
+    , m = Empty
     }
-
-
-createDot : Node -> Cell
-createDot node =
-    { node = node, status = Dot }
 
 
 level1 : Board
 level1 =
     { emptyBoard
-        | g = createDot G
-        , i = createDot I
-        , j = createDot J
-        , m = createDot M
+        | g = Dot
+        , i = Dot
+        , j = Dot
+        , m = Dot
     }
 
 
 level2 : Board
 level2 =
     { emptyBoard
-        | a = createDot A
-        , b = createDot B
-        , d = createDot D
-        , i = createDot I
-        , k = createDot K
+        | a = Dot
+        , b = Dot
+        , d = Dot
+        , i = Dot
+        , k = Dot
     }
 
 
 level3 : Board
 level3 =
     { emptyBoard
-        | b = createDot B
-        , g = createDot G
-        , i = createDot I
-        , l = createDot L
-        , m = createDot M
+        | b = Dot
+        , g = Dot
+        , i = Dot
+        , l = Dot
+        , m = Dot
     }
 
 
 level4 : Board
 level4 =
     { emptyBoard
-        | f = createDot F
-        , g = createDot G
-        , i = createDot I
-        , j = createDot J
-        , k = createDot K
+        | f = Dot
+        , g = Dot
+        , i = Dot
+        , j = Dot
+        , k = Dot
     }
 
 
 level5 : Board
 level5 =
     { emptyBoard
-        | a = createDot A
-        , e = createDot E
-        , g = createDot G
-        , h = createDot H
-        , l = createDot L
+        | a = Dot
+        , e = Dot
+        , g = Dot
+        , h = Dot
+        , l = Dot
     }
 
 
 level6 : Board
 level6 =
     { emptyBoard
-        | b = createDot B
-        , g = createDot G
-        , i = createDot I
-        , j = createDot J
-        , l = createDot L
-        , m = createDot M
+        | b = Dot
+        , g = Dot
+        , i = Dot
+        , j = Dot
+        , l = Dot
+        , m = Dot
     }
 
 
 level7 : Board
 level7 =
     { emptyBoard
-        | e = createDot E
-        , f = createDot F
-        , g = createDot G
-        , i = createDot I
-        , j = createDot J
-        , k = createDot K
+        | e = Dot
+        , f = Dot
+        , g = Dot
+        , i = Dot
+        , j = Dot
+        , k = Dot
     }
 
 
 level8 : Board
 level8 =
     { emptyBoard
-        | a = createDot A
-        , b = createDot B
-        , f = createDot F
-        , i = createDot I
-        , k = createDot K
-        , l = createDot L
+        | a = Dot
+        , b = Dot
+        , f = Dot
+        , i = Dot
+        , k = Dot
+        , l = Dot
     }
 
 
 level9 : Board
 level9 =
     { emptyBoard
-        | b = createDot B
-        , d = createDot D
-        , e = createDot E
-        , g = createDot G
-        , i = createDot I
-        , j = createDot J
-        , l = createDot L
+        | b = Dot
+        , d = Dot
+        , e = Dot
+        , g = Dot
+        , i = Dot
+        , j = Dot
+        , l = Dot
     }
 
 
 level10 : Board
 level10 =
     { emptyBoard
-        | b = createDot B
-        , d = createDot D
-        , e = createDot E
-        , i = createDot I
-        , j = createDot J
-        , l = createDot L
-        , m = createDot M
+        | b = Dot
+        , d = Dot
+        , e = Dot
+        , i = Dot
+        , j = Dot
+        , l = Dot
+        , m = Dot
     }

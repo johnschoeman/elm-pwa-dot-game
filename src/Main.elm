@@ -157,12 +157,7 @@ isValid board fromNode neighborNode destinationNode =
 
 hasDotAt : Board -> Node -> Bool
 hasDotAt board node =
-    getDataAtNode isDot board node
-
-
-isDot : Cell -> Bool
-isDot cell =
-    cell.status == Dot
+    getDataAtNode board node == Dot
 
 
 makeMove : Board -> Node -> Node -> Node -> Board
@@ -174,12 +169,7 @@ makeMove board fromNode neighborNode toNode =
 
 setCell : Node -> Status -> Board -> Board
 setCell node status board =
-    updateBoardByNode node (setStatus status) board
-
-
-setStatus : Status -> Cell -> Cell
-setStatus status cell =
-    { cell | status = status }
+    updateBoardByNode node status board
 
 
 
@@ -243,29 +233,29 @@ boardToHtml board selection =
             "flex flex-row justify-center items-center"
     in
     div [ class "flex-column p-4 items-center justify-center border-2" ]
-        [ div [ class rowStyle ] [ cellWithBoarder board.a, cellWithBoarder board.b, cellWithBoarder board.c ]
-        , div [ class rowStyle ] [ cellWithBoarder board.d, cellWithBoarder board.e ]
-        , div [ class rowStyle ] [ cellWithBoarder board.f, cellWithBoarder board.g, cellWithBoarder board.h ]
-        , div [ class rowStyle ] [ cellWithBoarder board.i, cellWithBoarder board.j ]
-        , div [ class rowStyle ] [ cellWithBoarder board.k, cellWithBoarder board.l, cellWithBoarder board.m ]
+        [ div [ class rowStyle ] [ cellWithBoarder A board.a, cellWithBoarder B board.b, cellWithBoarder C board.c ]
+        , div [ class rowStyle ] [ cellWithBoarder D board.d, cellWithBoarder E board.e ]
+        , div [ class rowStyle ] [ cellWithBoarder F board.f, cellWithBoarder G board.g, cellWithBoarder H board.h ]
+        , div [ class rowStyle ] [ cellWithBoarder I board.i, cellWithBoarder J board.j ]
+        , div [ class rowStyle ] [ cellWithBoarder K board.k, cellWithBoarder L board.l, cellWithBoarder M board.m ]
         ]
 
 
-cellToHtml : Node -> Cell -> Html Msg
-cellToHtml selection cell =
+cellToHtml : Node -> Node -> Status -> Html Msg
+cellToHtml selection cellNode cellStatus =
     let
         baseStyle =
             "flex items-center justify-center text-gray-700 text-center bg-gray-200 w-12 h-12 px-4 py-2 m-2"
 
         style =
-            if cell.node == selection then
+            if cellNode == selection then
                 baseStyle ++ " border-2 border-blue-600"
 
             else
                 baseStyle
 
         content =
-            case cell.status of
+            case cellStatus of
                 Dot ->
                     " D "
 
@@ -273,7 +263,7 @@ cellToHtml selection cell =
                     " - "
     in
     div [ class "flex justify-center items-center w-24" ]
-        [ div [ class style, onClick (SelectNode cell.node) ] [ text content ]
+        [ div [ class style, onClick (SelectNode cellNode) ] [ text content ]
         ]
 
 
