@@ -59,32 +59,19 @@ update msg model =
                 fromNode =
                     model.selection
 
-                maybeNeighborNode =
-                    getNeighborNode fromNode toNode
+                nextBoard =
+                    makeMove model.board fromNode toNode
+
+                nextGameState =
+                    gameState nextBoard
             in
-            case maybeNeighborNode of
-                Just neighborNode ->
-                    if Board.moveIsValid model.board fromNode toNode then
-                        let
-                            nextBoard =
-                                makeMove model.board fromNode neighborNode toNode
-
-                            nextGameState =
-                                gameState nextBoard
-                        in
-                        ( { model
-                            | selection = toNode
-                            , board = nextBoard
-                            , gameState = nextGameState
-                          }
-                        , Cmd.none
-                        )
-
-                    else
-                        ( { model | selection = toNode }, Cmd.none )
-
-                Nothing ->
-                    ( { model | selection = toNode }, Cmd.none )
+            ( { model
+                | selection = toNode
+                , board = nextBoard
+                , gameState = nextGameState
+              }
+            , Cmd.none
+            )
 
         ResetGame ->
             let
@@ -148,24 +135,36 @@ gameState board =
         Lost
 
 
-makeMove : Board -> Node -> Node -> Node -> Board
-makeMove board fromNode neighborNode toNode =
+makeMove : Board -> Node -> Node -> Board
+makeMove board fromNode toNode =
     let
         fromStatus =
             getDataAtNode board fromNode
+
+        maybeNeighborNode =
+            getNeighborNode fromNode toNode
     in
-    case fromStatus of
-        BlackDot ->
-            setCell neighborNode Empty board
-                |> setCell toNode BlackDot
-                |> setCell fromNode Empty
+    case maybeNeighborNode of
+        Just neighborNode ->
+            if moveIsValid board fromNode toNode then
+                case fromStatus of
+                    BlackDot ->
+                        setCell neighborNode Empty board
+                            |> setCell toNode BlackDot
+                            |> setCell fromNode Empty
 
-        Dot ->
-            setCell neighborNode Empty board
-                |> setCell toNode Dot
-                |> setCell fromNode Empty
+                    Dot ->
+                        setCell neighborNode Empty board
+                            |> setCell toNode Dot
+                            |> setCell fromNode Empty
 
-        Empty ->
+                    Empty ->
+                        board
+
+            else
+                board
+
+        Nothing ->
             board
 
 
