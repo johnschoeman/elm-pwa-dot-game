@@ -2,9 +2,12 @@ module Main exposing (..)
 
 import Board exposing (..)
 import Browser
+import Canvas exposing (circle, lineTo, moveTo, rect, shapes, toHtml)
+import Canvas.Settings exposing (fill)
+import Color exposing (Color)
 import Dict
 import Html exposing (Html, button, div, h1, img, text, ul)
-import Html.Attributes exposing (class, src)
+import Html.Attributes exposing (class, src, style)
 import Html.Events exposing (onClick)
 
 
@@ -246,6 +249,7 @@ view model =
         , div [ class "p-8" ]
             [ header model
             , boardToHtml board selection
+            , boardBackground
             ]
         ]
 
@@ -261,6 +265,14 @@ header model =
         , div [ class "text-gray-800 px-4 py-4" ] [ text (String.fromInt model.level) ]
         , button [ onClick IncrementLevel, class buttonStyle ] [ text "->" ]
         , button [ onClick ResetGame, class (buttonStyle ++ " ml-8") ] [ text "Reset" ]
+        ]
+
+
+boardBackground : Html Msg
+boardBackground =
+    Canvas.toHtml ( 516, 516 )
+        [ style "border" "10px solid rgba(0,0,0,0.1)" ]
+        [ shapes [ fill Color.blue ] [ rect ( 0, 0 ) 64 64 ]
         ]
 
 
