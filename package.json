@@ -1,10 +1,12 @@
 {
   "scripts": {
-    "build": "elm-app build"
+    "build": "elm-app build",
+    "buildCss": "npx tailwind build src/main.css -o src/output.css"
   },
   "dependencies": {
     "elm-format": "^0.8.2",
-    "tailwind": "^4.0.0"
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^1.2.0"
   },
   "devDependencies": {
     "create-elm-app": "^4.2.1",
