@@ -477,6 +477,11 @@ levels =
         , ( 8, level8 )
         , ( 9, level9 )
         , ( 10, level10 )
+        , ( 11, level11 )
+        , ( 12, level12 )
+        , ( 13, level13 )
+        , ( 14, level14 )
+        , ( 15, level15 )
         ]
 
 
@@ -522,7 +527,7 @@ level2 =
 level3 : Board
 level3 =
     { emptyBoard
-        | b = Dot
+        | b = BlackDot
         , g = Dot
         , i = Dot
         , l = Dot
@@ -534,7 +539,7 @@ level4 : Board
 level4 =
     { emptyBoard
         | f = Dot
-        , g = Dot
+        , g = BlackDot
         , i = Dot
         , j = Dot
         , k = Dot
@@ -544,7 +549,7 @@ level4 =
 level5 : Board
 level5 =
     { emptyBoard
-        | a = Dot
+        | a = BlackDot
         , e = Dot
         , g = Dot
         , h = Dot
@@ -556,7 +561,7 @@ level6 : Board
 level6 =
     { emptyBoard
         | b = Dot
-        , g = Dot
+        , g = BlackDot
         , i = Dot
         , j = Dot
         , l = Dot
@@ -569,7 +574,7 @@ level7 =
     { emptyBoard
         | e = Dot
         , f = Dot
-        , g = Dot
+        , g = BlackDot
         , i = Dot
         , j = Dot
         , k = Dot
@@ -583,7 +588,7 @@ level8 =
         , b = Dot
         , f = Dot
         , i = Dot
-        , k = Dot
+        , k = BlackDot
         , l = Dot
     }
 
@@ -594,7 +599,7 @@ level9 =
         | b = Dot
         , d = Dot
         , e = Dot
-        , g = Dot
+        , g = BlackDot
         , i = Dot
         , j = Dot
         , l = Dot
@@ -606,9 +611,76 @@ level10 =
     { emptyBoard
         | b = Dot
         , d = Dot
-        , e = Dot
+        , e = BlackDot
         , i = Dot
         , j = Dot
         , l = Dot
         , m = Dot
+    }
+
+
+level11 : Board
+level11 =
+    { emptyBoard
+        | a = Dot
+        , b = Dot
+        , d = Dot
+        , e = Dot
+        , f = BlackDot
+        , g = Dot
+        , m = Dot
+    }
+
+
+level12 : Board
+level12 =
+    { emptyBoard
+        | b = Dot
+        , d = Dot
+        , e = BlackDot
+        , i = Dot
+        , j = Dot
+        , k = Dot
+    }
+
+
+level13 : Board
+level13 =
+    { emptyBoard
+        | b = Dot
+        , e = Dot
+        , f = BlackDot
+        , h = Dot
+        , i = Dot
+        , l = Dot
+        , m = Dot
+    }
+
+
+level14 : Board
+level14 =
+    { emptyBoard
+        | b = Dot
+        , d = BlackDot
+        , e = Dot
+        , f = Dot
+        , g = Dot
+        , i = Dot
+        , j = Dot
+        , m = Dot
+    }
+
+
+level15 : Board
+level15 =
+    { emptyBoard
+        | b = Dot
+        , c = Dot
+        , d = Dot
+        , e = Dot
+        , h = Dot
+        , i = Dot
+        , j = Dot
+        , k = BlackDot
+        , l = Dot
     }
