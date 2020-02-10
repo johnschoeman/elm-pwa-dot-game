@@ -11,6 +11,7 @@ module Board exposing
     , getNeighborNode
     , level1
     , levels
+    , moveIsValid
     , updateBoardByNode
     )
 
@@ -44,6 +45,7 @@ allNodes =
 
 type Status
     = Dot
+    | BlackDot
     | Empty
 
 
@@ -117,6 +119,19 @@ nodeToString node =
 
         M ->
             "M"
+
+
+statusToString : Status -> String
+statusToString status =
+    case status of
+        Empty ->
+            "E"
+
+        Dot ->
+            "D"
+
+        BlackDot ->
+            "B"
 
 
 
@@ -424,7 +439,7 @@ anyValidMovesForNode board fromNode toNode acc =
 
 
 moveIsValid : Board -> Node -> Node -> Bool
-moveIsValid board toNode fromNode =
+moveIsValid board fromNode toNode =
     let
         maybeNeighborNode =
             getNeighborNode fromNode toNode
@@ -444,7 +459,9 @@ moveIsValid board toNode fromNode =
                 toStatus =
                     getDataAtNode board toNode
             in
-            fromStatus == Dot && neighborStatus == Dot && toStatus == Empty
+            (fromStatus == Dot || fromStatus == BlackDot)
+                && (neighborStatus == Dot && neighborStatus /= BlackDot)
+                && (toStatus == Empty)
 
 
 levels : Dict.Dict Int Board
@@ -485,7 +502,7 @@ level1 : Board
 level1 =
     { emptyBoard
         | g = Dot
-        , i = Dot
+        , i = BlackDot
         , j = Dot
         , m = Dot
     }
@@ -495,7 +512,7 @@ level2 : Board
 level2 =
     { emptyBoard
         | a = Dot
-        , b = Dot
+        , b = BlackDot
         , d = Dot
         , i = Dot
         , k = Dot

@@ -64,7 +64,7 @@ update msg model =
             in
             case maybeNeighborNode of
                 Just neighborNode ->
-                    if isValid model.board fromNode neighborNode toNode then
+                    if Board.moveIsValid model.board fromNode toNode then
                         let
                             nextBoard =
                                 makeMove model.board fromNode neighborNode toNode
@@ -138,7 +138,7 @@ gameState board =
         count =
             dotCount board
     in
-    if count == 1 then
+    if count == 0 then
         Won
 
     else if anyValidMoves board then
@@ -148,23 +148,25 @@ gameState board =
         Lost
 
 
-isValid : Board -> Node -> Node -> Node -> Bool
-isValid board fromNode neighborNode destinationNode =
-    hasDotAt board fromNode
-        && not (hasDotAt board destinationNode)
-        && hasDotAt board neighborNode
-
-
-hasDotAt : Board -> Node -> Bool
-hasDotAt board node =
-    getDataAtNode board node == Dot
-
-
 makeMove : Board -> Node -> Node -> Node -> Board
 makeMove board fromNode neighborNode toNode =
-    setCell neighborNode Empty board
-        |> setCell toNode Dot
-        |> setCell fromNode Empty
+    let
+        fromStatus =
+            getDataAtNode board fromNode
+    in
+    case fromStatus of
+        BlackDot ->
+            setCell neighborNode Empty board
+                |> setCell toNode BlackDot
+                |> setCell fromNode Empty
+
+        Dot ->
+            setCell neighborNode Empty board
+                |> setCell toNode Dot
+                |> setCell fromNode Empty
+
+        Empty ->
+            board
 
 
 setCell : Node -> Status -> Board -> Board
@@ -258,6 +260,9 @@ cellToHtml selection cellNode cellStatus =
             case cellStatus of
                 Dot ->
                     " D "
+
+                BlackDot ->
+                    " B "
 
                 Empty ->
                     " - "
