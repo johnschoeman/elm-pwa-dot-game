@@ -14,6 +14,10 @@ module Board exposing
 import Dict
 
 
+
+---- MODEL ----
+
+
 type alias A =
     Node
 

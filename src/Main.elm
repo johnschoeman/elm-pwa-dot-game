@@ -248,8 +248,7 @@ view model =
         [ h1 [ class "text-gray-800 p-4 border-b-2 border-gray-800" ] [ text "Elm PWA Dot Game" ]
         , div [ class "p-8" ]
             [ header model
-            , boardToHtml board selection
-            , boardBackground
+            , renderBoard board selection
             ]
         ]
 
@@ -268,11 +267,32 @@ header model =
         ]
 
 
+renderBoard : Board -> Node -> Html Msg
+renderBoard board selection =
+    div [ class "flex justify-center items-center" ]
+        [ boardBackground
+        ]
+
+
 boardBackground : Html Msg
 boardBackground =
-    Canvas.toHtml ( 516, 516 )
-        [ style "border" "10px solid rgba(0,0,0,0.1)" ]
-        [ shapes [ fill Color.blue ] [ rect ( 0, 0 ) 64 64 ]
+    let
+        height =
+            600
+
+        width =
+            100
+    in
+    Canvas.toHtml ( height, width )
+        [ style "border" "2px solid blue" ]
+        [ shapes [ fill Color.orange ] [ rect ( 0, 0 ) width height ]
+        , renderSquare
+        ]
+
+
+renderSquare =
+    shapes [ fill Color.blue ]
+        [ rect ( 10, 10 ) 100 50
         ]
 
 
@@ -318,49 +338,6 @@ cellToHtml selection cell =
     div [ class "flex justify-center items-center w-24" ]
         [ div [ class style, onClick (SelectNode cell.node) ] [ text content ]
         ]
-
-
-nodeToString : Node -> String
-nodeToString node =
-    case node of
-        A ->
-            "A"
-
-        B ->
-            "B"
-
-        C ->
-            "C"
-
-        D ->
-            "D"
-
-        E ->
-            "E"
-
-        F ->
-            "F"
-
-        G ->
-            "G"
-
-        H ->
-            "H"
-
-        I ->
-            "I"
-
-        J ->
-            "J"
-
-        K ->
-            "K"
-
-        L ->
-            "L"
-
-        M ->
-            "M"
 
 
 
