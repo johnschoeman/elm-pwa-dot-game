@@ -20,16 +20,23 @@ type alias Level =
     Int
 
 
+type GameState
+    = Won
+    | Lost
+    | InProgress
+
+
 type alias Model =
     { board : Board
     , selection : Selection
     , level : Level
+    , gameState : GameState
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { board = Board.level1, selection = A, level = 1 }, Cmd.none )
+    ( { board = Board.level1, selection = A, level = 1, gameState = InProgress }, Cmd.none )
 
 
 
@@ -58,10 +65,17 @@ update msg model =
             case maybeNeighborNode of
                 Just neighborNode ->
                     if isValid model.board fromNode neighborNode toNode then
+                        let
+                            nextBoard =
+                                makeMove model.board fromNode neighborNode toNode
+
+                            nextGameState =
+                                gameState nextBoard
+                        in
                         ( { model
                             | selection = toNode
-                            , board =
-                                makeMove model.board fromNode neighborNode toNode
+                            , board = nextBoard
+                            , gameState = nextGameState
                           }
                         , Cmd.none
                         )
@@ -79,10 +93,10 @@ update msg model =
             in
             case maybeLevel of
                 Just level ->
-                    ( { model | board = level }, Cmd.none )
+                    ( { model | board = level, gameState = InProgress }, Cmd.none )
 
                 Nothing ->
-                    ( { model | board = Board.level1 }, Cmd.none )
+                    ( { model | board = Board.level1, gameState = InProgress }, Cmd.none )
 
         IncrementLevel ->
             let
@@ -94,7 +108,7 @@ update msg model =
             in
             case maybeNextLevel of
                 Just level ->
-                    ( { model | level = nextLevelNumber, board = level }, Cmd.none )
+                    ( { model | level = nextLevelNumber, board = level, gameState = InProgress }, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -109,13 +123,29 @@ update msg model =
             in
             case maybeNextLevel of
                 Just level ->
-                    ( { model | level = nextLevelNumber, board = level }, Cmd.none )
+                    ( { model | level = nextLevelNumber, board = level, gameState = InProgress }, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
+
+
+gameState : Board -> GameState
+gameState board =
+    let
+        count =
+            dotCount board
+    in
+    if count == 1 then
+        Won
+
+    else if anyValidMoves board then
+        InProgress
+
+    else
+        Lost
 
 
 isValid : Board -> Node -> Node -> Node -> Bool
@@ -127,45 +157,7 @@ isValid board fromNode neighborNode destinationNode =
 
 hasDotAt : Board -> Node -> Bool
 hasDotAt board node =
-    case node of
-        A ->
-            isDot board.a
-
-        B ->
-            isDot board.b
-
-        C ->
-            isDot board.c
-
-        D ->
-            isDot board.d
-
-        E ->
-            isDot board.e
-
-        F ->
-            isDot board.f
-
-        G ->
-            isDot board.g
-
-        H ->
-            isDot board.h
-
-        I ->
-            isDot board.i
-
-        J ->
-            isDot board.j
-
-        K ->
-            isDot board.k
-
-        L ->
-            isDot board.l
-
-        M ->
-            isDot board.m
+    getDataAtNode isDot board node
 
 
 isDot : Cell -> Bool
@@ -182,49 +174,11 @@ makeMove board fromNode neighborNode toNode =
 
 setCell : Node -> Status -> Board -> Board
 setCell node status board =
-    case node of
-        A ->
-            { board | a = setStatus board.a status }
-
-        B ->
-            { board | b = setStatus board.b status }
-
-        C ->
-            { board | c = setStatus board.c status }
-
-        D ->
-            { board | d = setStatus board.d status }
-
-        E ->
-            { board | e = setStatus board.e status }
-
-        F ->
-            { board | f = setStatus board.f status }
-
-        G ->
-            { board | g = setStatus board.g status }
-
-        H ->
-            { board | h = setStatus board.h status }
-
-        I ->
-            { board | i = setStatus board.i status }
-
-        J ->
-            { board | j = setStatus board.j status }
-
-        K ->
-            { board | k = setStatus board.k status }
-
-        L ->
-            { board | l = setStatus board.l status }
-
-        M ->
-            { board | m = setStatus board.m status }
+    updateBoardByNode node (setStatus status) board
 
 
-setStatus : Cell -> Status -> Cell
-setStatus cell status =
+setStatus : Status -> Cell -> Cell
+setStatus status cell =
     { cell | status = status }
 
 
@@ -255,9 +209,24 @@ header model =
     let
         buttonStyle =
             "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+
+        gameStateText =
+            case model.gameState of
+                Won ->
+                    "YOU WON"
+
+                Lost ->
+                    "YOU LOST"
+
+                InProgress ->
+                    ""
     in
     div [ class "flex flex-row justify-center items-center" ]
-        [ button [ onClick DecrementLevel, class buttonStyle ] [ text "<-" ]
+        [ text (String.fromInt (dotCount model.board))
+        , text gameStateText
+        , button
+            [ onClick DecrementLevel, class buttonStyle ]
+            [ text "<-" ]
         , div [ class "text-gray-800 px-4 py-4" ] [ text (String.fromInt model.level) ]
         , button [ onClick IncrementLevel, class buttonStyle ] [ text "->" ]
         , button [ onClick ResetGame, class (buttonStyle ++ " ml-8") ] [ text "Reset" ]
@@ -306,49 +275,6 @@ cellToHtml selection cell =
     div [ class "flex justify-center items-center w-24" ]
         [ div [ class style, onClick (SelectNode cell.node) ] [ text content ]
         ]
-
-
-nodeToString : Node -> String
-nodeToString node =
-    case node of
-        A ->
-            "A"
-
-        B ->
-            "B"
-
-        C ->
-            "C"
-
-        D ->
-            "D"
-
-        E ->
-            "E"
-
-        F ->
-            "F"
-
-        G ->
-            "G"
-
-        H ->
-            "H"
-
-        I ->
-            "I"
-
-        J ->
-            "J"
-
-        K ->
-            "K"
-
-        L ->
-            "L"
-
-        M ->
-            "M"
 
 
 

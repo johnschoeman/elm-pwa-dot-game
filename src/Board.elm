@@ -6,9 +6,13 @@ module Board exposing
     , Node(..)
     , Start
     , Status(..)
+    , anyValidMoves
+    , dotCount
+    , getDataAtNode
     , getNeighborNode
     , level1
     , levels
+    , updateBoardByNode
     )
 
 import Dict
@@ -32,6 +36,11 @@ type Node
     | K
     | L
     | M
+
+
+allNodes : List Node
+allNodes =
+    [ A, B, C, D, E, F, G, H, I, J, K, L, M ]
 
 
 type Status
@@ -72,6 +81,49 @@ type alias Board =
     , l : Cell
     , m : Cell
     }
+
+
+nodeToString : Node -> String
+nodeToString node =
+    case node of
+        A ->
+            "A"
+
+        B ->
+            "B"
+
+        C ->
+            "C"
+
+        D ->
+            "D"
+
+        E ->
+            "E"
+
+        F ->
+            "F"
+
+        G ->
+            "G"
+
+        H ->
+            "H"
+
+        I ->
+            "I"
+
+        J ->
+            "J"
+
+        K ->
+            "K"
+
+        L ->
+            "L"
+
+        M ->
+            "M"
 
 
 
@@ -241,6 +293,168 @@ getNeighborNode fromNode toNode =
 
                 _ ->
                     Nothing
+
+
+updateBoardByNode : Node -> (Cell -> Cell) -> Board -> Board
+updateBoardByNode node updateCell board =
+    case node of
+        A ->
+            { board | a = updateCell board.a }
+
+        B ->
+            { board | b = updateCell board.b }
+
+        C ->
+            { board | c = updateCell board.c }
+
+        D ->
+            { board | d = updateCell board.d }
+
+        E ->
+            { board | e = updateCell board.e }
+
+        F ->
+            { board | f = updateCell board.f }
+
+        G ->
+            { board | g = updateCell board.g }
+
+        H ->
+            { board | h = updateCell board.h }
+
+        I ->
+            { board | i = updateCell board.i }
+
+        J ->
+            { board | j = updateCell board.j }
+
+        K ->
+            { board | k = updateCell board.k }
+
+        L ->
+            { board | l = updateCell board.l }
+
+        M ->
+            { board | m = updateCell board.m }
+
+
+getDataAtNode : (Cell -> a) -> Board -> Node -> a
+getDataAtNode evaluateCell board node =
+    case node of
+        A ->
+            evaluateCell board.a
+
+        B ->
+            evaluateCell board.b
+
+        C ->
+            evaluateCell board.c
+
+        D ->
+            evaluateCell board.d
+
+        E ->
+            evaluateCell board.e
+
+        F ->
+            evaluateCell board.f
+
+        G ->
+            evaluateCell board.g
+
+        H ->
+            evaluateCell board.h
+
+        I ->
+            evaluateCell board.i
+
+        J ->
+            evaluateCell board.j
+
+        K ->
+            evaluateCell board.k
+
+        L ->
+            evaluateCell board.l
+
+        M ->
+            evaluateCell board.m
+
+
+dotCount : Board -> Int
+dotCount board =
+    List.foldl (addDots board) 0 allNodes
+
+
+addDots : Board -> Node -> Int -> Int
+addDots board node acc =
+    getDataAtNode hasDot board node + acc
+
+
+hasDot : Cell -> Int
+hasDot cell =
+    if cell.status == Dot then
+        1
+
+    else
+        0
+
+
+anyValidMoves : Board -> Bool
+anyValidMoves board =
+    List.foldr (anyValidMovesOnBoard board) False allNodes
+
+
+anyValidMovesOnBoard : Board -> Node -> Bool -> Bool
+anyValidMovesOnBoard board fromNode acc =
+    case acc of
+        True ->
+            True
+
+        False ->
+            getDataAtNode (hasValidMove board) board fromNode
+
+
+hasValidMove : Board -> Cell -> Bool
+hasValidMove board fromCell =
+    List.foldl (anyValidMovesForCell board fromCell) False allNodes
+
+
+anyValidMovesForCell : Board -> Cell -> Node -> Bool -> Bool
+anyValidMovesForCell board fromCell toNode acc =
+    case acc of
+        True ->
+            True
+
+        False ->
+            getDataAtNode (moveIsValid board toNode) board fromCell.node
+
+
+moveIsValid : Board -> Node -> Cell -> Bool
+moveIsValid board toNode fromCell =
+    let
+        fromNode =
+            fromCell.node
+
+        maybeNeighborNode =
+            getNeighborNode fromNode toNode
+    in
+    case maybeNeighborNode of
+        Nothing ->
+            False
+
+        Just neighborNode ->
+            let
+                fromStatus =
+                    getDataAtNode .status board fromNode
+
+                neighborStatus =
+                    getDataAtNode .status board neighborNode
+
+                toStatus =
+                    getDataAtNode .status board toNode
+            in
+            fromStatus == Dot && neighborStatus == Dot && toStatus == Empty
 
 
 levels : Dict.Dict Int Board
