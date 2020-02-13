@@ -5,12 +5,13 @@ module Board exposing
     , Node(..)
     , Start
     , Status(..)
+    , allBoards
     , anyValidMoves
+    , board1
+    , boardDictionary
     , dotCount
     , getDataAtNode
     , getNeighborNode
-    , level1
-    , levels
     , moveIsValid
     , updateBoardByNode
     )
@@ -464,25 +465,30 @@ moveIsValid board fromNode toNode =
                 && (toStatus == Empty)
 
 
-levels : Dict.Dict Int Board
-levels =
-    Dict.fromList
-        [ ( 1, level1 )
-        , ( 2, level2 )
-        , ( 3, level3 )
-        , ( 4, level4 )
-        , ( 5, level5 )
-        , ( 6, level6 )
-        , ( 7, level7 )
-        , ( 8, level8 )
-        , ( 9, level9 )
-        , ( 10, level10 )
-        , ( 11, level11 )
-        , ( 12, level12 )
-        , ( 13, level13 )
-        , ( 14, level14 )
-        , ( 15, level15 )
-        ]
+allBoards : List Board
+allBoards =
+    [ board1
+    , board2
+    , board3
+    , board4
+    , board5
+    , board6
+    , board7
+    , board8
+    , board9
+    , board10
+    , board11
+    , board12
+    , board13
+    , board14
+    , board15
+    ]
+
+
+boardDictionary : Dict.Dict Int Board
+boardDictionary =
+    List.indexedMap (\idx board -> ( idx, board )) allBoards
+        |> Dict.fromList
 
 
 emptyBoard : Board
@@ -503,8 +509,8 @@ emptyBoard =
     }
 
 
-level1 : Board
-level1 =
+board1 : Board
+board1 =
     { emptyBoard
         | g = Dot
         , i = BlackDot
@@ -513,8 +519,8 @@ level1 =
     }
 
 
-level2 : Board
-level2 =
+board2 : Board
+board2 =
     { emptyBoard
         | a = Dot
         , b = BlackDot
@@ -524,8 +530,8 @@ level2 =
     }
 
 
-level3 : Board
-level3 =
+board3 : Board
+board3 =
     { emptyBoard
         | b = BlackDot
         , g = Dot
@@ -535,8 +541,8 @@ level3 =
     }
 
 
-level4 : Board
-level4 =
+board4 : Board
+board4 =
     { emptyBoard
         | f = Dot
         , g = BlackDot
@@ -546,8 +552,8 @@ level4 =
     }
 
 
-level5 : Board
-level5 =
+board5 : Board
+board5 =
     { emptyBoard
         | a = BlackDot
         , e = Dot
@@ -557,8 +563,8 @@ level5 =
     }
 
 
-level6 : Board
-level6 =
+board6 : Board
+board6 =
     { emptyBoard
         | b = Dot
         , g = BlackDot
@@ -569,8 +575,8 @@ level6 =
     }
 
 
-level7 : Board
-level7 =
+board7 : Board
+board7 =
     { emptyBoard
         | e = Dot
         , f = Dot
@@ -581,8 +587,8 @@ level7 =
     }
 
 
-level8 : Board
-level8 =
+board8 : Board
+board8 =
     { emptyBoard
         | a = Dot
         , b = Dot
@@ -593,8 +599,8 @@ level8 =
     }
 
 
-level9 : Board
-level9 =
+board9 : Board
+board9 =
     { emptyBoard
         | b = Dot
         , d = Dot
@@ -606,8 +612,8 @@ level9 =
     }
 
 
-level10 : Board
-level10 =
+board10 : Board
+board10 =
     { emptyBoard
         | b = Dot
         , d = Dot
@@ -619,8 +625,8 @@ level10 =
     }
 
 
-level11 : Board
-level11 =
+board11 : Board
+board11 =
     { emptyBoard
         | a = Dot
         , b = Dot
@@ -632,8 +638,8 @@ level11 =
     }
 
 
-level12 : Board
-level12 =
+board12 : Board
+board12 =
     { emptyBoard
         | b = Dot
         , d = Dot
@@ -644,8 +650,8 @@ level12 =
     }
 
 
-level13 : Board
-level13 =
+board13 : Board
+board13 =
     { emptyBoard
         | b = Dot
         , e = Dot
@@ -657,8 +663,8 @@ level13 =
     }
 
 
-level14 : Board
-level14 =
+board14 : Board
+board14 =
     { emptyBoard
         | b = Dot
         , d = BlackDot
@@ -671,8 +677,8 @@ level14 =
     }
 
 
-level15 : Board
-level15 =
+board15 : Board
+board15 =
     { emptyBoard
         | b = Dot
         , c = Dot

@@ -1,11 +1,12 @@
 module Main exposing (..)
 
 import Browser
-import Game
 import Html exposing (Html, a, button, div, h1, img, li, text, ul)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
-import Levels
+import Level exposing (Level)
+import Screen.Game as Game
+import Screen.Levels as Levels
 
 
 
@@ -33,7 +34,8 @@ init =
 
 
 type Msg
-    = ChangeScreen Screen
+    = GoToGame Level
+    | GoToLevels
     | GotGameMsg Game.Msg
     | GotLevelsMsg Levels.Msg
     | NoOp
@@ -42,14 +44,17 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ChangeScreen screen ->
-            ( { model | currentScreen = screen }, Cmd.none )
-
         GotGameMsg subMsg ->
             ( { model | game = Game.update subMsg model.game }, Cmd.none )
 
         GotLevelsMsg subMsg ->
             ( model, Cmd.none )
+
+        GoToGame level ->
+            ( { model | currentScreen = Game, game = Game.updateLevel level model.game }, Cmd.none )
+
+        GoToLevels ->
+            ( { model | currentScreen = Levels }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -68,7 +73,7 @@ view model =
                     Html.map (\gameMsg -> GotGameMsg gameMsg) (Game.view model.game)
 
                 Levels ->
-                    Html.map (\levelsMsg -> GotLevelsMsg levelsMsg) Levels.view
+                    Levels.view goToGameCallback
     in
     div [ class "bg-gray-100" ]
         [ div [ class "p-8" ]
@@ -76,6 +81,11 @@ view model =
             , body
             ]
         ]
+
+
+goToGameCallback : Level -> Html.Attribute Msg
+goToGameCallback level =
+    onClick (GoToGame level)
 
 
 header : Html Msg
@@ -88,14 +98,25 @@ header =
 
 navigation : Html Msg
 navigation =
-    let
-        buttonStyle =
-            "bg-blue-500 text-white font-bold py-2 px-4 mr-8 rounded"
-    in
     div [ class "mt-4" ]
-        [ a [ class buttonStyle, onClick (ChangeScreen Game) ] [ text "Game" ]
-        , a [ class buttonStyle, onClick (ChangeScreen Levels) ] [ text "Levels" ]
+        [ navigateToGameButton
+        , navigateToLevelsButton
         ]
+
+
+buttonStyle : String
+buttonStyle =
+    "bg-blue-500 text-white font-bold py-2 px-4 mr-8 rounded"
+
+
+navigateToGameButton : Html Msg
+navigateToGameButton =
+    button [ onClick (GoToGame Level.level1) ] [ text "Game" ]
+
+
+navigateToLevelsButton : Html Msg
+navigateToLevelsButton =
+    button [ onClick GoToLevels ] [ text "Levels" ]
 
 
 

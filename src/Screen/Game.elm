@@ -1,10 +1,11 @@
-module Game exposing (Model, Msg, init, update, view)
+module Screen.Game exposing (Model, Msg, init, update, updateLevel, view)
 
-import Board exposing (..)
+import Board exposing (Board, Node(..), Status(..), anyValidMoves, board1, boardDictionary, dotCount, getDataAtNode, getNeighborNode, moveIsValid, updateBoardByNode)
 import Dict
 import Html exposing (Html, a, button, div, h1, img, li, text, ul)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
+import Level exposing (Level)
 
 
 
@@ -13,10 +14,6 @@ import Html.Events exposing (onClick)
 
 type alias Selection =
     Node
-
-
-type alias Level =
-    Int
 
 
 type GameState
@@ -28,16 +25,16 @@ type GameState
 type alias Model =
     { board : Board
     , selection : Selection
-    , level : Level
+    , levelId : Int
     , gameState : GameState
     }
 
 
 init : Model
 init =
-    { board = Board.level1
+    { board = Board.board1
     , selection = A
-    , level = 1
+    , levelId = 1
     , gameState = InProgress
     }
 
@@ -75,28 +72,19 @@ update msg model =
             }
 
         ResetGame ->
-            let
-                maybeLevel =
-                    Dict.get model.level Board.levels
-            in
-            case maybeLevel of
-                Just level ->
-                    { model | board = level, gameState = InProgress }
-
-                Nothing ->
-                    { model | board = Board.level1, gameState = InProgress }
+            resetGame model
 
         IncrementLevel ->
             let
                 nextLevelNumber =
-                    model.level + 1
+                    model.levelId + 1
 
                 maybeNextLevel =
-                    Dict.get nextLevelNumber Board.levels
+                    Dict.get nextLevelNumber Board.boardDictionary
             in
             case maybeNextLevel of
                 Just level ->
-                    { model | level = nextLevelNumber, board = level, gameState = InProgress }
+                    { model | levelId = nextLevelNumber, board = level, gameState = InProgress }
 
                 Nothing ->
                     model
@@ -104,20 +92,45 @@ update msg model =
         DecrementLevel ->
             let
                 nextLevelNumber =
-                    model.level - 1
+                    model.levelId - 1
 
                 maybeNextLevel =
-                    Dict.get nextLevelNumber Board.levels
+                    Dict.get nextLevelNumber Board.boardDictionary
             in
             case maybeNextLevel of
                 Just level ->
-                    { model | level = nextLevelNumber, board = level, gameState = InProgress }
+                    { model | levelId = nextLevelNumber, board = level, gameState = InProgress }
 
                 Nothing ->
                     model
 
         NoOp ->
             model
+
+
+updateLevel : Level -> Model -> Model
+updateLevel level model =
+    setLevel level model
+        |> resetGame
+
+
+setLevel : Level -> Model -> Model
+setLevel level model =
+    { model | levelId = level.id }
+
+
+resetGame : Model -> Model
+resetGame model =
+    let
+        maybeLevel =
+            Dict.get model.levelId Board.boardDictionary
+    in
+    case maybeLevel of
+        Just level ->
+            { model | board = level, gameState = InProgress }
+
+        Nothing ->
+            { model | board = Board.board1, gameState = InProgress }
 
 
 gameState : Board -> GameState
@@ -202,6 +215,9 @@ gameHeader model =
 
                 InProgress ->
                     ""
+
+        currentLevelText =
+            "Level " ++ String.fromInt model.levelId
     in
     div [ class "flex flex-row justify-center items-center" ]
         [ text (String.fromInt (dotCount model.board))
@@ -209,7 +225,7 @@ gameHeader model =
         , button
             [ onClick DecrementLevel, class buttonStyle ]
             [ text "<-" ]
-        , div [ class "text-gray-800 px-4 py-4" ] [ text (String.fromInt model.level) ]
+        , div [ class "text-gray-800 px-4 py-4" ] [ text currentLevelText ]
         , button [ onClick IncrementLevel, class buttonStyle ] [ text "->" ]
         , button [ onClick ResetGame, class (buttonStyle ++ " ml-8") ] [ text "Reset" ]
         ]
