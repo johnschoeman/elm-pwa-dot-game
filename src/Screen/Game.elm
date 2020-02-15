@@ -34,7 +34,7 @@ init : Model
 init =
     { board = Board.board1
     , selection = A
-    , levelId = 1
+    , levelId = 0
     , gameState = InProgress
     }
 
