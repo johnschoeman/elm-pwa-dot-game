@@ -5,7 +5,7 @@ import Html exposing (Html, a, button, div, h1, img, li, text, ul)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Level exposing (Level)
-import Screen.Game as Game
+import Screen.Game as Game exposing (GameState(..))
 import Screen.Levels as Levels
 
 
@@ -21,12 +21,18 @@ type Screen
 type alias Model =
     { currentScreen : Screen
     , game : Game.Model
+    , levels : List Level.Level
     }
+
+
+initialLevels : List Level.Level
+initialLevels =
+    Level.allLevels
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { currentScreen = Game, game = Game.init }, Cmd.none )
+    ( { currentScreen = Game, game = Game.init, levels = initialLevels }, Cmd.none )
 
 
 
@@ -45,7 +51,20 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotGameMsg subMsg ->
-            ( { model | game = Game.update subMsg model.game }, Cmd.none )
+            let
+                nextGame =
+                    Game.update subMsg model.game
+
+                nextLevels =
+                    updateLevels nextGame model.levels
+            in
+            ( { model
+                | game = Game.update subMsg model.game
+                , levels =
+                    nextLevels
+              }
+            , Cmd.none
+            )
 
         GotLevelsMsg subMsg ->
             ( model, Cmd.none )
@@ -58,6 +77,20 @@ update msg model =
 
         NoOp ->
             ( model, Cmd.none )
+
+
+updateLevels : Game.Model -> List Level -> List Level
+updateLevels game levels =
+    List.indexedMap (\idx level -> updateLevel idx game.levelId level) levels
+
+
+updateLevel : Int -> Int -> Level -> Level
+updateLevel idx gameLevelId level =
+    if idx == level.id && idx == gameLevelId then
+        { level | completed = True }
+
+    else
+        level
 
 
 
@@ -73,7 +106,7 @@ view model =
                     Html.map (\gameMsg -> GotGameMsg gameMsg) (Game.view model.game)
 
                 Levels ->
-                    Levels.view goToGameCallback
+                    Levels.view goToGameCallback model.levels
     in
     div [ class "bg-gray-100" ]
         [ div [ class "p-8" ]

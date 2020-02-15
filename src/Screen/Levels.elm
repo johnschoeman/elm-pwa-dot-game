@@ -34,15 +34,25 @@ update msg model =
 ---- VIEW ----
 
 
-view : (Level -> Html.Attribute msg) -> Html msg
-view navigateCallback =
+view : (Level -> Html.Attribute msg) -> List Level -> Html msg
+view navigateCallback levels =
     div []
-        [ ul [] (List.map (levelButton navigateCallback) allLevels)
+        [ ul [] (List.map (levelListItem navigateCallback) levels)
         ]
 
 
-levelButton : (Level -> Html.Attribute msg) -> Level -> Html msg
-levelButton navigateCallback level =
+levelListItem : (Level -> Html.Attribute msg) -> Level -> Html msg
+levelListItem navigateCallback level =
     li []
         [ button [ navigateCallback level ] [ text (Level.toString level) ]
+        , levelCompletedText level
         ]
+
+
+levelCompletedText : Level -> Html msg
+levelCompletedText level =
+    if level.completed then
+        text "C"
+
+    else
+        text "-"

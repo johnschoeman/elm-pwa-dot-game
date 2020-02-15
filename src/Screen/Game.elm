@@ -1,4 +1,4 @@
-module Screen.Game exposing (Model, Msg, init, update, updateLevel, view)
+module Screen.Game exposing (GameState(..), Model, Msg, init, update, updateLevel, view)
 
 import Board exposing (Board, Node(..), Status(..), anyValidMoves, board1, boardDictionary, dotCount, getDataAtNode, getNeighborNode, moveIsValid, updateBoardByNode)
 import Dict
