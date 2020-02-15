@@ -6,6 +6,9 @@ import Html exposing (Html, a, button, div, h1, img, li, text, ul)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Level exposing (Level)
+import Svg exposing (Svg, circle, line, svg)
+import Svg.Attributes exposing (color, cx, cy, fill, r, stroke, strokeWidth, viewBox, x1, x2, y1, y2)
+import Svg.Events
 
 
 
@@ -195,7 +198,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ gameHeader model
-        , boardToHtml model.board model.selection
+        , boardToSvg model.board model.selection
         ]
 
 
@@ -231,48 +234,104 @@ gameHeader model =
         ]
 
 
-boardToHtml : Board -> Node -> Html Msg
-boardToHtml board selection =
+boardToSvg : Board -> Node -> Html Msg
+boardToSvg board selection =
     let
-        cellWithBoarder =
-            cellToHtml selection
+        cellWithSelection =
+            cellToSvg selection
 
-        rowStyle =
-            "flex flex-row justify-center items-center"
+        scaleFactor =
+            40
+
+        row1 =
+            String.fromInt (scaleFactor * 1)
+
+        row2 =
+            String.fromInt (scaleFactor * 2)
+
+        row3 =
+            String.fromInt (scaleFactor * 3)
+
+        row4 =
+            String.fromInt (scaleFactor * 4)
+
+        row5 =
+            String.fromInt (scaleFactor * 5)
+
+        col1 =
+            String.fromInt (scaleFactor * 1)
+
+        col2 =
+            String.fromInt (scaleFactor * 2)
+
+        col3 =
+            String.fromInt (scaleFactor * 3)
+
+        col4 =
+            String.fromInt (scaleFactor * 4)
+
+        col5 =
+            String.fromInt (scaleFactor * 5)
     in
-    div [ class "flex-column p-4 items-center justify-center border-2" ]
-        [ div [ class rowStyle ] [ cellWithBoarder A board.a, cellWithBoarder B board.b, cellWithBoarder C board.c ]
-        , div [ class rowStyle ] [ cellWithBoarder D board.d, cellWithBoarder E board.e ]
-        , div [ class rowStyle ] [ cellWithBoarder F board.f, cellWithBoarder G board.g, cellWithBoarder H board.h ]
-        , div [ class rowStyle ] [ cellWithBoarder I board.i, cellWithBoarder J board.j ]
-        , div [ class rowStyle ] [ cellWithBoarder K board.k, cellWithBoarder L board.l, cellWithBoarder M board.m ]
+    svg [ viewBox "0 0 300 300", strokeWidth "3", stroke "black" ]
+        [ -- long diagonals
+          line [ x1 row1, x2 row5, y1 col1, y2 col5, stroke "black" ] []
+        , line [ x1 row5, x2 row1, y1 col1, y2 col5, stroke "black" ] []
+
+        -- short diagonals
+        , line [ x1 row1, x2 row3, y1 col3, y2 col5, stroke "black" ] []
+        , line [ x1 row3, x2 row1, y1 col1, y2 col3, stroke "black" ] []
+        , line [ x1 row3, x2 row5, y1 col1, y2 col3, stroke "black" ] []
+        , line [ x1 row3, x2 row5, y1 col5, y2 col3, stroke "black" ] []
+
+        -- horizontals
+        , line [ x1 row1, x2 row1, y1 col1, y2 col5, stroke "black" ] []
+        , line [ x1 row3, x2 row3, y1 col1, y2 col5, stroke "black" ] []
+        , line [ x1 row5, x2 row5, y1 col1, y2 col5, stroke "black" ] []
+        , line [ x1 row1, x2 row5, y1 col1, y2 col1, stroke "black" ] []
+        , line [ x1 row1, x2 row5, y1 col3, y2 col3, stroke "black" ] []
+        , line [ x1 row1, x2 row5, y1 col5, y2 col5, stroke "black" ] []
+        , cellWithSelection A board.a col1 row1
+        , cellWithSelection B board.b col3 row1
+        , cellWithSelection C board.c col5 row1
+        , cellWithSelection D board.d col2 row2
+        , cellWithSelection E board.e col4 row2
+        , cellWithSelection F board.f col1 row3
+        , cellWithSelection G board.g col3 row3
+        , cellWithSelection H board.h col5 row3
+        , cellWithSelection I board.i col2 row4
+        , cellWithSelection J board.j col4 row4
+        , cellWithSelection K board.k col1 row5
+        , cellWithSelection L board.l col3 row5
+        , cellWithSelection M board.m col5 row5
         ]
 
 
-cellToHtml : Node -> Node -> Status -> Html Msg
-cellToHtml selection cellNode cellStatus =
+cellToSvg : Node -> Node -> Status -> String -> String -> Html Msg
+cellToSvg selection cellNode cellStatus xPos yPos =
     let
-        baseStyle =
-            "flex items-center justify-center text-gray-700 text-center bg-gray-200 w-12 h-12 px-4 py-2 m-2"
-
-        style =
-            if cellNode == selection then
-                baseStyle ++ " border-2 border-blue-600"
-
-            else
-                baseStyle
-
-        content =
+        circleFill =
             case cellStatus of
                 Dot ->
-                    " D "
+                    fill "blue"
 
                 BlackDot ->
-                    " B "
+                    fill "black"
 
                 Empty ->
-                    " - "
+                    fill "white"
+
+        circleStroke =
+            if selection == cellNode then
+                stroke "green"
+
+            else
+                stroke "black"
     in
-    div [ class "flex justify-center items-center w-24" ]
-        [ div [ class style, onClick (SelectNode cellNode) ] [ text content ]
+    svg
+        [ Svg.Events.onClick (SelectNode cellNode)
+        , circleFill
+        , circleStroke
+        ]
+        [ circle [ cx xPos, cy yPos, r "15" ] []
         ]
