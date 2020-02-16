@@ -13966,7 +13966,7 @@ video {
 }
 
 * {
-  touch-action: none
+  touch-action: pan-y
 }
 
 @media (min-width: 640px) {
