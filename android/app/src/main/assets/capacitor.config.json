@@ -1,0 +1,8 @@
+{
+  "appId": "com.johnschoeman.blackdotjump",
+  "appName": "BlackDotJump",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "build",
+  "cordova": {}
+}

@@ -4,6 +4,10 @@
     "build-css": "npx tailwind build src/main.css -o src/output.css"
   },
   "dependencies": {
+    "@capacitor/android": "^1.5.0",
+    "@capacitor/cli": "^1.5.0",
+    "@capacitor/core": "^1.5.0",
+    "@capacitor/ios": "^1.5.0",
     "elm-format": "^0.8.2",
     "tailwind": "^4.0.0",
     "tailwindcss": "^1.2.0"
