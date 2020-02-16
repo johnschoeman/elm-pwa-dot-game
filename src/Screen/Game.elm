@@ -196,7 +196,7 @@ setCell node status board =
 
 view : Model -> Html Msg
 view model =
-    div []
+    div [ class "m-auto max-w-sm" ]
         [ gameHeader model
         , boardToSvg model.board model.selection
         ]
@@ -204,34 +204,48 @@ view model =
 
 gameHeader : Model -> Html Msg
 gameHeader model =
+    div [ class "flex-column" ]
+        [ div [ class "w-full max-w-sm" ] [ gameButtons model ]
+        , div [ class "w-full h-8 p-4 text-center items-center" ] [ gameStateText model.gameState ]
+        ]
+
+
+gameButtons : Model -> Html Msg
+gameButtons model =
     let
         buttonStyle =
             "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
 
-        gameStateText =
-            case model.gameState of
-                Won ->
-                    "YOU WON"
-
-                Lost ->
-                    "YOU LOST"
-
-                InProgress ->
-                    ""
-
         currentLevelText =
             "Level " ++ String.fromInt model.levelId
     in
-    div [ class "flex flex-row justify-center items-center" ]
-        [ text (String.fromInt (dotCount model.board))
-        , text gameStateText
-        , button
-            [ onClick DecrementLevel, class buttonStyle ]
-            [ text "<-" ]
-        , div [ class "text-gray-800 px-4 py-4" ] [ text currentLevelText ]
-        , button [ onClick IncrementLevel, class buttonStyle ] [ text "->" ]
-        , button [ onClick ResetGame, class (buttonStyle ++ " ml-8") ] [ text "Reset" ]
+    div [ class "mt-4 flex flex-row justify-center items-center h-36" ]
+        [ div [ class "flex-1 w-full justify-center" ]
+            [ button [ onClick DecrementLevel, class buttonStyle ] [ img [ src "keyboard_arrow_left-24px.svg" ] [] ]
+            ]
+        , div [ class "flex-1 w-full text-start" ] [ text currentLevelText ]
+        , div [ class "flex-1 w-full justify-center" ]
+            [ button [ onClick IncrementLevel, class buttonStyle ] [ img [ src "keyboard_arrow_right-24px.svg" ] [] ]
+            ]
+        , div [ class "flex-1 w-full justify-center items-center" ]
+            [ button [ onClick ResetGame, class (buttonStyle ++ " ml-8") ] [ img [ src "refresh-24px.svg" ] [] ]
+            ]
         ]
+
+
+gameStateText : GameState -> Html Msg
+gameStateText status =
+    text
+        (case status of
+            Won ->
+                "COMPLETED!"
+
+            Lost ->
+                "FAILED!"
+
+            InProgress ->
+                ""
+        )
 
 
 boardToSvg : Board -> Node -> Html Msg
@@ -272,8 +286,14 @@ boardToSvg board selection =
 
         col5 =
             String.fromInt (scaleFactor * 5)
+
+        viewWidth =
+            String.fromInt (scaleFactor * 6)
+
+        viewBoxAttribute =
+            "0 0 " ++ viewWidth ++ " " ++ viewWidth
     in
-    svg [ viewBox "0 0 300 300", strokeWidth "3", stroke "black" ]
+    svg [ viewBox viewBoxAttribute, strokeWidth "3", stroke "black" ]
         [ -- long diagonals
           line [ x1 row1, x2 row5, y1 col1, y2 col5, stroke "black" ] []
         , line [ x1 row5, x2 row1, y1 col1, y2 col5, stroke "black" ] []

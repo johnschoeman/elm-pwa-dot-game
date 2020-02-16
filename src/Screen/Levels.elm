@@ -43,16 +43,16 @@ view navigateCallback levels =
 
 levelListItem : (Level -> Html.Attribute msg) -> Level -> Html msg
 levelListItem navigateCallback level =
-    li []
-        [ button [ navigateCallback level ] [ text (Level.toString level) ]
-        , levelCompletedText level
+    li [ class "flex w-full py-2 px-1 justify-between border-b border-gray-800" ]
+        [ button [ navigateCallback level, class "text-gray-800 font-semibold" ] [ text (Level.toString level) ]
+        , levelCompletedIcon level
         ]
 
 
-levelCompletedText : Level -> Html msg
-levelCompletedText level =
+levelCompletedIcon : Level -> Html msg
+levelCompletedIcon level =
     if level.completed then
-        text "C"
+        img [ src "stars-24px.svg" ] []
 
     else
-        text "-"
+        text ""

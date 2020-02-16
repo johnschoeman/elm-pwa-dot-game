@@ -41,7 +41,7 @@ init =
 
 type Msg
     = GoToGame Level
-    | GoToLevels
+    | ToggleLevelScreen
     | GotGameMsg Game.Msg
     | GotLevelsMsg Levels.Msg
     | NoOp
@@ -72,8 +72,12 @@ update msg model =
         GoToGame level ->
             ( { model | currentScreen = Game, game = Game.updateLevel level model.game }, Cmd.none )
 
-        GoToLevels ->
-            ( { model | currentScreen = Levels }, Cmd.none )
+        ToggleLevelScreen ->
+            if model.currentScreen == Game then
+                ( { model | currentScreen = Levels }, Cmd.none )
+
+            else
+                ( { model | currentScreen = Game }, Cmd.none )
 
         NoOp ->
             ( model, Cmd.none )
@@ -108,10 +112,10 @@ view model =
                 Levels ->
                     Levels.view goToGameCallback model.levels
     in
-    div [ class "bg-gray-100" ]
-        [ div [ class "p-8" ]
-            [ header
-            , body
+    div [ class "" ]
+        [ div [ class "px-8 max-w-sm m-auto" ]
+            [ header model
+            , div [ class "border-b-2 border-gray-800 py-2" ] [ body ]
             ]
         ]
 
@@ -121,35 +125,23 @@ goToGameCallback level =
     onClick (GoToGame level)
 
 
-header : Html Msg
-header =
-    div [ class "border-b-2 border-gray-800 py-8" ]
-        [ h1 [ class "text-2xl text-gray-800 " ] [ text "Elm PWA Dot Game" ]
-        , navigation
+header : Model -> Html Msg
+header model =
+    let
+        ( levelsButtonStyle, levelButtonText ) =
+            case model.currentScreen of
+                Game ->
+                    ( "border-2 border-gray-800 text-gray-800 font-bold py-1 px-2 rounded", "Levels" )
+
+                Levels ->
+                    ( "border-2 border-gray-800 text-gray-800 font-bold py-1 px-2 rounded", "X" )
+    in
+    div [ class "flex w-full content-between border-b-2 border-gray-800 py-8" ]
+        [ h1 [ class "flex-1 text-2xl font-bold text-gray-800 " ] [ text "Dot Jump" ]
+        , div [ class "flex flex-1 justify-end items-center" ]
+            [ button [ class levelsButtonStyle, onClick ToggleLevelScreen ] [ text levelButtonText ]
+            ]
         ]
-
-
-navigation : Html Msg
-navigation =
-    div [ class "mt-4" ]
-        [ navigateToGameButton
-        , navigateToLevelsButton
-        ]
-
-
-buttonStyle : String
-buttonStyle =
-    "bg-blue-500 text-white font-bold py-2 px-4 mr-8 rounded"
-
-
-navigateToGameButton : Html Msg
-navigateToGameButton =
-    button [ onClick (GoToGame Level.level1) ] [ text "Game" ]
-
-
-navigateToLevelsButton : Html Msg
-navigateToLevelsButton =
-    button [ onClick GoToLevels ] [ text "Levels" ]
 
 
 
