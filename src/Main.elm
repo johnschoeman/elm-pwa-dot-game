@@ -85,7 +85,11 @@ update msg model =
 
 updateLevels : Game.Model -> List Level -> List Level
 updateLevels game levels =
-    List.indexedMap (\idx level -> updateLevel idx game.levelId level) levels
+    if game.gameState == Won then
+        List.indexedMap (\idx level -> updateLevel idx game.levelId level) levels
+
+    else
+        levels
 
 
 updateLevel : Int -> Int -> Level -> Level
