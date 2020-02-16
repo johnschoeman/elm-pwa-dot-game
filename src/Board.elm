@@ -482,6 +482,11 @@ allBoards =
     , board13
     , board14
     , board15
+    , board16
+    , board17
+    , board18
+    , board19
+    , board20
     ]
 
 
@@ -688,5 +693,75 @@ board15 =
         , i = Dot
         , j = Dot
         , k = BlackDot
+        , l = Dot
+    }
+
+
+board16 : Board
+board16 =
+    { emptyBoard
+        | a = Dot
+        , b = BlackDot
+        , c = Dot
+        , d = Dot
+        , e = Dot
+        , f = Dot
+        , h = Dot
+    }
+
+
+board17 : Board
+board17 =
+    { emptyBoard
+        | b = Dot
+        , c = Dot
+        , e = Dot
+        , f = Dot
+        , g = Dot
+        , h = Dot
+        , i = Dot
+        , k = BlackDot
+        , m = Dot
+    }
+
+
+board18 : Board
+board18 =
+    { emptyBoard
+        | a = Dot
+        , b = Dot
+        , d = Dot
+        , e = Dot
+        , f = Dot
+        , g = Dot
+        , h = Dot
+        , i = Dot
+        , j = BlackDot
+        , m = Dot
+    }
+
+
+board19 : Board
+board19 =
+    { emptyBoard
+        | a = BlackDot
+        , e = Dot
+        , f = Dot
+        , i = Dot
+        , k = Dot
+        , m = Dot
+    }
+
+
+board20 : Board
+board20 =
+    { emptyBoard
+        | b = Dot
+        , d = Dot
+        , e = Dot
+        , g = Dot
+        , h = Dot
+        , i = BlackDot
+        , j = Dot
         , l = Dot
     }
