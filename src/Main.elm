@@ -141,7 +141,7 @@ header model =
                     ( "border-2 border-gray-800 text-gray-800 font-bold py-1 px-2 rounded", "X" )
     in
     div [ class "flex w-full content-between border-b-2 border-gray-800 py-8" ]
-        [ h1 [ class "flex-1 text-2xl font-bold text-gray-800 " ] [ text "Dot Jump" ]
+        [ h1 [ class "flex-1 text-2xl font-bold text-gray-800 py-8 " ] [ text "Dot Jump" ]
         , div [ class "flex flex-1 justify-end items-center" ]
             [ button [ class levelsButtonStyle, onClick ToggleLevelScreen ] [ text levelButtonText ]
             ]
