@@ -487,6 +487,16 @@ allBoards =
     , board18
     , board19
     , board20
+    , board21
+    , board22
+    , board23
+    , board24
+    , board25
+    , board26
+    , board27
+    , board28
+    , board29
+    , board30
     ]
 
 
@@ -749,7 +759,7 @@ board19 =
         , f = Dot
         , i = Dot
         , k = Dot
-        , m = Dot
+        , l = Dot
     }
 
 
@@ -763,5 +773,150 @@ board20 =
         , h = Dot
         , i = BlackDot
         , j = Dot
+        , l = Dot
+    }
+
+
+board21 : Board
+board21 =
+    { emptyBoard
+        | d = BlackDot
+        , e = Dot
+        , f = Dot
+        , i = Dot
+        , j = Dot
+        , k = Dot
+        , l = Dot
+    }
+
+
+board22 : Board
+board22 =
+    { emptyBoard
+        | d = Dot
+        , e = Dot
+        , f = Dot
+        , h = Dot
+        , i = Dot
+        , j = BlackDot
+        , l = Dot
+        , m = Dot
+    }
+
+
+board23 : Board
+board23 =
+    { emptyBoard
+        | b = Dot
+        , c = BlackDot
+        , d = Dot
+        , e = Dot
+        , h = Dot
+        , i = Dot
+        , j = Dot
+        , l = Dot
+        , m = Dot
+    }
+
+
+board24 : Board
+board24 =
+    { emptyBoard
+        | a = Dot
+        , b = Dot
+        , d = Dot
+        , e = BlackDot
+        , f = Dot
+        , g = Dot
+        , i = Dot
+        , j = Dot
+        , m = Dot
+    }
+
+
+board25 : Board
+board25 =
+    { emptyBoard
+        | b = BlackDot
+        , c = Dot
+        , d = Dot
+        , f = Dot
+        , h = Dot
+        , i = Dot
+        , j = Dot
+        , k = Dot
+        , l = Dot
+    }
+
+
+board26 : Board
+board26 =
+    { emptyBoard
+        | b = Dot
+        , d = Dot
+        , e = Dot
+        , f = Dot
+        , g = Dot
+        , i = Dot
+        , j = BlackDot
+        , l = Dot
+    }
+
+
+board27 : Board
+board27 =
+    { emptyBoard
+        | a = Dot
+        , d = Dot
+        , f = Dot
+        , g = Dot
+        , i = BlackDot
+        , j = Dot
+        , l = Dot
+        , m = Dot
+    }
+
+
+board28 : Board
+board28 =
+    { emptyBoard
+        | a = Dot
+        , c = Dot
+        , d = Dot
+        , e = Dot
+        , g = Dot
+        , i = Dot
+        , j = Dot
+        , k = Dot
+        , l = BlackDot
+        , m = Dot
+    }
+
+
+board29 : Board
+board29 =
+    { emptyBoard
+        | a = Dot
+        , b = Dot
+        , d = Dot
+        , e = Dot
+        , f = Dot
+        , h = Dot
+        , i = Dot
+        , j = BlackDot
+        , l = Dot
+    }
+
+
+board30 : Board
+board30 =
+    { emptyBoard
+        | d = Dot
+        , e = BlackDot
+        , f = Dot
+        , g = Dot
+        , i = Dot
+        , j = Dot
+        , k = Dot
         , l = Dot
     }
