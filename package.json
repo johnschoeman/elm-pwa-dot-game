@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "elm-app build",
+    "build": "elm-app build && npx cap sync",
     "start": "elm-app start",
     "build-css": "npx tailwind build src/main.css -o src/output.css"
   },
