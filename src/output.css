@@ -13966,7 +13966,11 @@ video {
 }
 
 * {
-  touch-action: pan-y
+  touch-action: pan-y;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
 }
 
 @media (min-width: 640px) {
@@ -67344,3 +67348,4 @@ video {
     transition-duration: 1000ms;
   }
 }
+

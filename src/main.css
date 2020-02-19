@@ -5,5 +5,7 @@
 @import "tailwindcss/utilities";
 
 * {
-  touch-action: pan-y
+  touch-action: pan-y;
+  user-select: none;
 }
+
