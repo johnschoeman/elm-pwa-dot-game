@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Browser
 import Html exposing (Html, a, button, div, h1, img, li, text, ul)
@@ -30,9 +30,20 @@ initialLevels =
     Level.allLevels
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { currentScreen = Game, game = Game.init, levels = initialLevels }, Cmd.none )
+init : List Bool -> ( Model, Cmd Msg )
+init savedData =
+    let
+        levels =
+            List.map2 (\level completed -> { level | completed = completed }) Level.allLevels savedData
+    in
+    ( { currentScreen = Game, game = Game.init, levels = levels }, Cmd.none )
+
+
+
+---- PORTS ----
+
+
+port saveLevels : List Bool -> Cmd msg
 
 
 
@@ -63,7 +74,7 @@ update msg model =
                 , levels =
                     nextLevels
               }
-            , Cmd.none
+            , saveLevels (List.map (\level -> level.completed) nextLevels)
             )
 
         GotLevelsMsg subMsg ->
@@ -152,11 +163,11 @@ header model =
 ---- PROGRAM ----
 
 
-main : Program () Model Msg
+main : Program (List Bool) Model Msg
 main =
     Browser.element
         { view = view
-        , init = \_ -> init
+        , init = init
         , update = update
         , subscriptions = always Sub.none
         }
