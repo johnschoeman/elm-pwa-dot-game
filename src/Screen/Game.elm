@@ -33,11 +33,11 @@ type alias Model =
     }
 
 
-init : Model
-init =
-    { board = Board.board1
+init : Int -> Model
+init id =
+    { board = Board.byId id
     , selection = A
-    , levelId = 0
+    , levelId = id
     , gameState = InProgress
     }
 

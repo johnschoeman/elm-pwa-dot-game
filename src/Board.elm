@@ -9,6 +9,7 @@ module Board exposing
     , anyValidMoves
     , board1
     , boardDictionary
+    , byId
     , dotCount
     , getDataAtNode
     , getNeighborNode
@@ -513,6 +514,21 @@ allBoards =
     , board44
     , board45
     ]
+
+
+byId : Int -> Board
+byId id =
+    let
+        maybeBoard =
+            List.drop id allBoards
+                |> List.head
+    in
+    case maybeBoard of
+        Just board ->
+            board
+
+        Nothing ->
+            board1
 
 
 boardDictionary : Dict.Dict Int Board

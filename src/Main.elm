@@ -30,13 +30,16 @@ initialLevels =
     Level.allLevels
 
 
-init : List Bool -> ( Model, Cmd Msg )
-init savedData =
+init : ( List Bool, Int ) -> ( Model, Cmd Msg )
+init ( savedLevels, lastLevelId ) =
     let
         levels =
-            List.map2 (\completed level -> { level | completed = completed }) savedData Level.allLevels
+            List.map2 (\completed level -> { level | completed = completed }) savedLevels Level.allLevels
+
+        levelId =
+            lastLevelId
     in
-    ( { currentScreen = Game, game = Game.init, levels = levels }, Cmd.none )
+    ( { currentScreen = Game, game = Game.init levelId, levels = levels }, Cmd.none )
 
 
 
@@ -163,7 +166,11 @@ header model =
 ---- PROGRAM ----
 
 
-main : Program (List Bool) Model Msg
+type alias Flags =
+    ( List Bool, Int )
+
+
+main : Program Flags Model Msg
 main =
     Browser.element
         { view = view

@@ -3,18 +3,18 @@ import { Elm } from './Main.elm';
 import * as serviceWorker from './serviceWorker';
 
 
-let rawData = localStorage.getItem("blackDotJump.levels")
+const rawLevels = localStorage.getItem("blackDotJump.levels")
 
 const parseData = (data) => {
-  let baseArray = new Array(30).fill(false)
-  return data
-    ? [...data.split(",").map((el) => el === "true"), ...baseArray]
-    : baseArray
+  const baseArray = new Array(30).fill(false)
+  const levels = data.split(",").map((el) => el === "true") || []
+  const levelId = levels.indexOf(false) || 0
+  return [[...levels, ...baseArray], levelId]
 }
 
 const app = Elm.Main.init({
   node: document.getElementById('root'),
-  flags: parseData(rawData)
+  flags: parseData(rawLevels)
 });
 
 app.ports.saveLevels.subscribe((data) => {
