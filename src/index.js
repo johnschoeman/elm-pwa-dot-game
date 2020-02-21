@@ -6,9 +6,10 @@ import * as serviceWorker from './serviceWorker';
 let rawData = localStorage.getItem("blackDotJump.levels")
 
 const parseData = (data) => {
+  let baseArray = new Array(30).fill(false)
   return data
-    ? data.split(",").map((el) => el === "true") 
-    : new Array(30).fill(false)
+    ? [...data.split(",").map((el) => el === "true"), ...baseArray]
+    : baseArray
 }
 
 const app = Elm.Main.init({

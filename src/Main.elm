@@ -34,7 +34,7 @@ init : List Bool -> ( Model, Cmd Msg )
 init savedData =
     let
         levels =
-            List.map2 (\level completed -> { level | completed = completed }) Level.allLevels savedData
+            List.map2 (\completed level -> { level | completed = completed }) savedData Level.allLevels
     in
     ( { currentScreen = Game, game = Game.init, levels = levels }, Cmd.none )
 
