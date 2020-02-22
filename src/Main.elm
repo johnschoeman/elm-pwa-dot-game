@@ -1,11 +1,11 @@
 port module Main exposing (..)
 
 import Browser
-import Html exposing (Html, a, button, div, h1, img, li, text, ul)
-import Html.Attributes exposing (class, src)
+import Html exposing (Html, button, div, h1, text)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Level exposing (Level)
-import Screen.Game as Game exposing (GameState(..))
+import Screen.Game as Game
 import Screen.Levels as Levels
 
 
@@ -22,6 +22,7 @@ type alias Model =
     { currentScreen : Screen
     , game : Game.Model
     , levels : List Level.Level
+    , currentLevelId : Int
     }
 
 
@@ -39,7 +40,13 @@ init ( savedLevels, lastLevelId ) =
         levelId =
             lastLevelId
     in
-    ( { currentScreen = Game, game = Game.init levelId, levels = levels }, Cmd.none )
+    ( { currentScreen = Game
+      , levels = levels
+      , currentLevelId = 1
+      , game = Game.init 1 levels
+      }
+    , Cmd.none
+    )
 
 
 
@@ -70,21 +77,17 @@ update msg model =
                     Game.update subMsg model.game
 
                 nextLevels =
-                    updateLevels nextGame model.levels
+                    nextGame.levels
             in
-            ( { model
-                | game = Game.update subMsg model.game
-                , levels =
-                    nextLevels
-              }
-            , saveLevels (List.map (\level -> level.completed) nextLevels)
+            ( { model | game = nextGame, levels = nextLevels }
+            , saveLevels (List.map (\l -> l.completed) nextLevels)
             )
 
-        GotLevelsMsg subMsg ->
+        GotLevelsMsg _ ->
             ( model, Cmd.none )
 
         GoToGame level ->
-            ( { model | currentScreen = Game, game = Game.updateLevel level model.game }, Cmd.none )
+            ( { model | currentScreen = Game, game = Game.init level.id model.levels }, Cmd.none )
 
         ToggleLevelScreen ->
             if model.currentScreen == Game then
@@ -97,24 +100,6 @@ update msg model =
             ( model, Cmd.none )
 
 
-updateLevels : Game.Model -> List Level -> List Level
-updateLevels game levels =
-    if game.gameState == Won then
-        List.indexedMap (\idx level -> updateLevel idx game.levelId level) levels
-
-    else
-        levels
-
-
-updateLevel : Int -> Int -> Level -> Level
-updateLevel idx gameLevelId level =
-    if idx == level.id && idx == gameLevelId then
-        { level | completed = True }
-
-    else
-        level
-
-
 
 ---- VIEW ----
 
@@ -125,7 +110,7 @@ view model =
         body =
             case model.currentScreen of
                 Game ->
-                    Html.map (\gameMsg -> GotGameMsg gameMsg) (Game.view model.game)
+                    div [] [ Html.map (\gameMsg -> GotGameMsg gameMsg) (Game.view model.game) ]
 
                 Levels ->
                     Levels.view goToGameCallback model.levels

@@ -7,8 +7,8 @@ const rawLevels = localStorage.getItem("blackDotJump.levels")
 
 const parseData = (data) => {
   const baseArray = new Array(30).fill(false)
-  const levels = data.split(",").map((el) => el === "true") || []
-  const levelId = levels.indexOf(false) || 0
+  const levels = data ? data.split(",").map((el) => el === "true") : []
+  const levelId = Math.max(levels.indexOf(false), 0)
   return [[...levels, ...baseArray], levelId]
 }
 

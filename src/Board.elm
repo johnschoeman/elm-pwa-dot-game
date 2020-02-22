@@ -6,14 +6,13 @@ module Board exposing
     , Start
     , Status(..)
     , allBoards
-    , anyValidMoves
+    , allNodes
     , board1
     , boardDictionary
     , byId
     , dotCount
     , getDataAtNode
     , getNeighborNode
-    , moveIsValid
     , updateBoardByNode
     )
 
@@ -408,62 +407,6 @@ hasDot status =
 
     else
         0
-
-
-anyValidMoves : Board -> Bool
-anyValidMoves board =
-    List.foldr (anyValidMovesOnBoard board) False allNodes
-
-
-anyValidMovesOnBoard : Board -> Node -> Bool -> Bool
-anyValidMovesOnBoard board fromNode acc =
-    case acc of
-        True ->
-            True
-
-        False ->
-            hasValidMove board fromNode
-
-
-hasValidMove : Board -> Node -> Bool
-hasValidMove board fromNode =
-    List.foldl (anyValidMovesForNode board fromNode) False allNodes
-
-
-anyValidMovesForNode : Board -> Node -> Node -> Bool -> Bool
-anyValidMovesForNode board fromNode toNode acc =
-    case acc of
-        True ->
-            True
-
-        False ->
-            moveIsValid board fromNode toNode
-
-
-moveIsValid : Board -> Node -> Node -> Bool
-moveIsValid board fromNode toNode =
-    let
-        maybeNeighborNode =
-            getNeighborNode fromNode toNode
-    in
-    case maybeNeighborNode of
-        Nothing ->
-            False
-
-        Just neighborNode ->
-            let
-                fromStatus =
-                    getDataAtNode board fromNode
-
-                neighborStatus =
-                    getDataAtNode board neighborNode
-
-                toStatus =
-                    getDataAtNode board toNode
-            in
-            (fromStatus == Dot || fromStatus == BlackDot)
-                && (neighborStatus == Dot && neighborStatus /= BlackDot)
-                && (toStatus == Empty)
 
 
 allBoards : List Board

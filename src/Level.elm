@@ -1,10 +1,15 @@
-module Level exposing (Level, allLevels, level1, toString)
+module Level exposing (Level, allLevels, getLevel, level1, toString, updateLevels)
 
 import Board exposing (Board, allBoards)
+import Dict exposing (Dict)
+import GameEngine
 
 
 type alias Level =
-    { id : Int, board : Board, completed : Bool }
+    { id : Int
+    , board : Board
+    , completed : Bool
+    }
 
 
 level1 : Level
@@ -23,3 +28,26 @@ allLevels =
 toString : Level -> String
 toString level =
     "Level " ++ String.fromInt level.id
+
+
+getLevel : Int -> List Level -> Maybe Level
+getLevel id levels =
+    List.drop id levels |> List.head
+
+
+updateLevels : GameEngine.State -> Int -> List Level -> List Level
+updateLevels gameState levelId levels =
+    if gameState == GameEngine.Won then
+        List.indexedMap (\idx level -> updateLevel idx levelId level) levels
+
+    else
+        levels
+
+
+updateLevel : Int -> Int -> Level -> Level
+updateLevel idx gameLevelId level =
+    if idx == level.id && idx == gameLevelId then
+        { level | completed = True }
+
+    else
+        level

@@ -1,13 +1,14 @@
-module Screen.Game exposing (GameState(..), Model, Msg, init, update, updateLevel, view)
+module Screen.Game exposing (Model, Msg, init, update, view)
 
-import Board exposing (Board, Node(..), Status(..), anyValidMoves, board1, boardDictionary, dotCount, getDataAtNode, getNeighborNode, moveIsValid, updateBoardByNode)
+import Board exposing (Board, Node(..), Status(..), board1, boardDictionary, getDataAtNode, getNeighborNode, updateBoardByNode)
 import Dict
-import Html exposing (Html, a, button, div, h1, img, li, text, ul)
+import GameEngine
+import Html exposing (Html, button, div, img, text)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Level exposing (Level)
 import Svg exposing (Svg, circle, line, svg)
-import Svg.Attributes exposing (color, cx, cy, fill, r, stroke, strokeWidth, viewBox, x1, x2, y1, y2)
+import Svg.Attributes exposing (cx, cy, fill, r, stroke, strokeWidth, viewBox, x1, x2, y1, y2)
 import Svg.Events
 
 
@@ -19,26 +20,29 @@ type alias Selection =
     Node
 
 
-type GameState
-    = Won
-    | Lost
-    | InProgress
-
-
 type alias Model =
-    { board : Board
-    , selection : Selection
+    { selection : Selection
     , levelId : Int
-    , gameState : GameState
+    , levels : List Level
+    , board : Board
     }
 
 
-init : Int -> Model
-init id =
-    { board = Board.byId id
-    , selection = A
-    , levelId = id
-    , gameState = InProgress
+init : Int -> List Level -> Model
+init levelId levels =
+    let
+        board =
+            case Level.getLevel levelId levels of
+                Just l ->
+                    l.board
+
+                Nothing ->
+                    Board.board1
+    in
+    { selection = A
+    , levelId = levelId
+    , levels = levels
+    , board = board
     }
 
 
@@ -63,15 +67,15 @@ update msg model =
                     model.selection
 
                 nextBoard =
-                    makeMove model.board fromNode toNode
+                    GameEngine.update fromNode toNode model.board
 
-                nextGameState =
-                    gameState nextBoard
+                nextLevels =
+                    Level.updateLevels (GameEngine.gameState nextBoard) model.levelId model.levels
             in
             { model
                 | selection = toNode
                 , board = nextBoard
-                , gameState = nextGameState
+                , levels = nextLevels
             }
 
         ResetGame ->
@@ -79,30 +83,30 @@ update msg model =
 
         IncrementLevel ->
             let
-                nextLevelNumber =
+                nextLevelId =
                     model.levelId + 1
 
-                maybeNextLevel =
-                    Dict.get nextLevelNumber Board.boardDictionary
+                maybeNextBoard =
+                    Dict.get nextLevelId Board.boardDictionary
             in
-            case maybeNextLevel of
-                Just level ->
-                    { model | levelId = nextLevelNumber, board = level, gameState = InProgress }
+            case maybeNextBoard of
+                Just board ->
+                    { model | levelId = nextLevelId, board = board }
 
                 Nothing ->
                     model
 
         DecrementLevel ->
             let
-                nextLevelNumber =
+                nextLevelId =
                     model.levelId - 1
 
-                maybeNextLevel =
-                    Dict.get nextLevelNumber Board.boardDictionary
+                maybeNextBoard =
+                    Dict.get nextLevelId Board.boardDictionary
             in
-            case maybeNextLevel of
-                Just level ->
-                    { model | levelId = nextLevelNumber, board = level, gameState = InProgress }
+            case maybeNextBoard of
+                Just board ->
+                    { model | levelId = nextLevelId, board = board }
 
                 Nothing ->
                     model
@@ -111,83 +115,18 @@ update msg model =
             model
 
 
-updateLevel : Level -> Model -> Model
-updateLevel level model =
-    setLevel level model
-        |> resetGame
-
-
-setLevel : Level -> Model -> Model
-setLevel level model =
-    { model | levelId = level.id }
-
-
 resetGame : Model -> Model
 resetGame model =
     let
-        maybeLevel =
+        maybeBoard =
             Dict.get model.levelId Board.boardDictionary
     in
-    case maybeLevel of
-        Just level ->
-            { model | board = level, gameState = InProgress }
+    case maybeBoard of
+        Just board ->
+            { model | board = board }
 
         Nothing ->
-            { model | board = Board.board1, gameState = InProgress }
-
-
-gameState : Board -> GameState
-gameState board =
-    let
-        count =
-            dotCount board
-    in
-    if count == 0 then
-        Won
-
-    else if anyValidMoves board then
-        InProgress
-
-    else
-        Lost
-
-
-makeMove : Board -> Node -> Node -> Board
-makeMove board fromNode toNode =
-    let
-        fromStatus =
-            getDataAtNode board fromNode
-
-        maybeNeighborNode =
-            getNeighborNode fromNode toNode
-    in
-    case maybeNeighborNode of
-        Just neighborNode ->
-            if moveIsValid board fromNode toNode then
-                case fromStatus of
-                    BlackDot ->
-                        setCell neighborNode Empty board
-                            |> setCell toNode BlackDot
-                            |> setCell fromNode Empty
-
-                    Dot ->
-                        setCell neighborNode Empty board
-                            |> setCell toNode Dot
-                            |> setCell fromNode Empty
-
-                    Empty ->
-                        board
-
-            else
-                board
-
-        Nothing ->
-            board
-
-
-setCell : Node -> Status -> Board -> Board
-setCell node status board =
-    updateBoardByNode node status board
+            { model | board = Board.board1 }
 
 
 
@@ -204,9 +143,29 @@ view model =
 
 gameHeader : Model -> Html Msg
 gameHeader model =
+    let
+        maybeLevelData =
+            Level.getLevel model.levelId model.levels
+
+        gameWonIcon =
+            case maybeLevelData of
+                Just levelData ->
+                    case levelData.completed of
+                        True ->
+                            img [ src "stars-24px.svg" ] []
+
+                        False ->
+                            text ""
+
+                Nothing ->
+                    text ""
+    in
     div [ class "flex-column" ]
         [ div [ class "w-full max-w-sm" ] [ gameButtons model ]
-        , div [ class "w-full h-8 p-4 text-center items-center" ] [ gameStateText model.gameState ]
+        , div [ class "w-full h-8 p-4 flex flex-row justify-between" ]
+            [ div [] [ gameStateText model.board ]
+            , div [] [ gameWonIcon ]
+            ]
         ]
 
 
@@ -233,19 +192,13 @@ gameButtons model =
         ]
 
 
-gameStateText : GameState -> Html Msg
-gameStateText status =
-    text
-        (case status of
-            Won ->
-                "COMPLETED!"
-
-            Lost ->
-                "FAILED!"
-
-            InProgress ->
-                ""
-        )
+gameStateText : Board -> Html msg
+gameStateText board =
+    let
+        gameState =
+            GameEngine.gameState board
+    in
+    text (GameEngine.showState gameState)
 
 
 boardToSvg : Board -> Node -> Html Msg
