@@ -5,17 +5,17 @@
     "build-css": "npx tailwind build src/main.css -o src/output.css"
   },
   "dependencies": {
-    "@capacitor/android": "^1.5.0",
-    "@capacitor/cli": "^1.5.0",
-    "@capacitor/core": "^1.5.0",
-    "@capacitor/ios": "^1.5.0",
-    "elm-format": "^0.8.2",
+    "@capacitor/android": "^1.5.1",
+    "@capacitor/cli": "^1.5.1",
+    "@capacitor/core": "^1.5.1",
+    "@capacitor/ios": "^1.5.1",
+    "elm-format": "^0.8.3",
     "tailwind": "^4.0.0",
     "tailwindcss": "^1.2.0"
   },
   "devDependencies": {
     "create-elm-app": "^4.2.1",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack": "^4.42.0",
+    "webpack-cli": "^3.3.11"
   }
 }
