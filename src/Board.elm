@@ -1,10 +1,6 @@
 module Board exposing
     ( Board
-    , Destination
-    , Neighbor
     , Node(..)
-    , Start
-    , Status(..)
     , allBoards
     , allNodes
     , board1
@@ -17,10 +13,7 @@ module Board exposing
     )
 
 import Dict
-
-
-type alias A =
-    Node
+import NodeStatus exposing (NodeStatus(..))
 
 
 type Node
@@ -44,38 +37,20 @@ allNodes =
     [ A, B, C, D, E, F, G, H, I, J, K, L, M ]
 
 
-type Status
-    = Dot
-    | BlackDot
-    | Empty
-
-
-type alias Start =
-    String
-
-
-type alias Neighbor =
-    String
-
-
-type alias Destination =
-    String
-
-
 type alias Board =
-    { a : Status
-    , b : Status
-    , c : Status
-    , d : Status
-    , e : Status
-    , f : Status
-    , g : Status
-    , h : Status
-    , i : Status
-    , j : Status
-    , k : Status
-    , l : Status
-    , m : Status
+    { a : NodeStatus
+    , b : NodeStatus
+    , c : NodeStatus
+    , d : NodeStatus
+    , e : NodeStatus
+    , f : NodeStatus
+    , g : NodeStatus
+    , h : NodeStatus
+    , i : NodeStatus
+    , j : NodeStatus
+    , k : NodeStatus
+    , l : NodeStatus
+    , m : NodeStatus
     }
 
 
@@ -120,19 +95,6 @@ nodeToString node =
 
         M ->
             "M"
-
-
-statusToString : Status -> String
-statusToString status =
-    case status of
-        Empty ->
-            "E"
-
-        Dot ->
-            "D"
-
-        BlackDot ->
-            "B"
 
 
 
@@ -304,7 +266,7 @@ getNeighborNode fromNode toNode =
                     Nothing
 
 
-updateBoardByNode : Node -> Status -> Board -> Board
+updateBoardByNode : Node -> NodeStatus -> Board -> Board
 updateBoardByNode node status board =
     case node of
         A ->
@@ -347,7 +309,7 @@ updateBoardByNode node status board =
             { board | m = status }
 
 
-getDataAtNode : Board -> Node -> Status
+getDataAtNode : Board -> Node -> NodeStatus
 getDataAtNode board node =
     case node of
         A ->
@@ -400,7 +362,7 @@ addDots board node acc =
     hasDot (getDataAtNode board node) + acc
 
 
-hasDot : Status -> Int
+hasDot : NodeStatus -> Int
 hasDot status =
     if status == Dot then
         1

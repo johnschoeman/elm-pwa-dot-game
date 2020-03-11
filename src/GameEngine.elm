@@ -1,6 +1,7 @@
 module GameEngine exposing (State(..), anyValidMovesForNode, gameState, moveIsValid, showState, update)
 
-import Board exposing (Board, Node(..), Status(..))
+import Board exposing (Board, Node(..))
+import NodeStatus exposing (NodeStatus(..))
 
 
 type State
@@ -55,7 +56,7 @@ update fromNode toNode board =
             board
 
 
-setCell : Node -> Status -> Board -> Board
+setCell : Node -> NodeStatus -> Board -> Board
 setCell node status board =
     Board.updateBoardByNode node status board
 

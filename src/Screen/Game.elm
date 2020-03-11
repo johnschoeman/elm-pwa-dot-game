@@ -1,12 +1,13 @@
 module Screen.Game exposing (Model, Msg, init, update, view)
 
-import Board exposing (Board, Node(..), Status(..), board1, boardDictionary, getDataAtNode, getNeighborNode, updateBoardByNode)
+import Board exposing (Board, Node(..), board1, boardDictionary, getDataAtNode, getNeighborNode, updateBoardByNode)
 import Dict
 import GameEngine
 import Html exposing (Html, button, div, img, text)
 import Html.Attributes exposing (class, src)
 import Html.Events exposing (onClick)
 import Level exposing (Level)
+import NodeStatus exposing (NodeStatus(..))
 import Svg exposing (Svg, circle, line, svg)
 import Svg.Attributes exposing (cx, cy, fill, r, stroke, strokeWidth, viewBox, x1, x2, y1, y2)
 import Svg.Events
@@ -280,7 +281,7 @@ boardToSvg board selection =
         ]
 
 
-cellToSvg : Node -> Node -> Status -> String -> String -> Html Msg
+cellToSvg : Node -> Node -> NodeStatus -> String -> String -> Html Msg
 cellToSvg selection cellNode cellStatus xPos yPos =
     let
         circleFill =
